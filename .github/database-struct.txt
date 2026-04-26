@@ -1,0 +1,553 @@
+CẤU TRÚC CƠ SỞ DỮ LIỆU HIỆN TẠI
+DATABASE: japanese_learning_db
+SCHEMA: public
+Cập nhật: 25/04/2026
+
+Ghi chú:
+- File này tổng hợp cấu trúc CSDL hiện tại sau khi import dữ liệu tiếng Nhật.
+- Tổng danh sách hiện tại: 25 bảng.
+
+============================================================
+NHÓM 1 — NGƯỜI DÙNG
+============================================================
+
+1. BẢNG: users
+Mục đích: Lưu thông tin tài khoản người dùng.
+
+Cột:
+- id               BIGSERIAL      PRIMARY KEY
+- email            CITEXT         NOT NULL, UNIQUE
+- password_hash    TEXT           NOT NULL
+- full_name        VARCHAR(255)   NOT NULL
+- display_name     VARCHAR(255)   NULL
+- avatar_url       TEXT           NULL
+- role             VARCHAR(20)    NOT NULL
+                                  Giá trị: student / teacher / admin
+- status           VARCHAR(20)    NOT NULL
+                                  Giá trị: active / blocked / pending
+- current_level    VARCHAR(10)    NULL
+                                  Giá trị: N5 / N4 / N3 / N2 / N1
+- timezone         VARCHAR(100)   NOT NULL
+- last_login_at    TIMESTAMPTZ    NULL
+- created_at       TIMESTAMPTZ    NOT NULL
+- updated_at       TIMESTAMPTZ    NOT NULL
+
+
+============================================================
+NHÓM 2 — NỘI DUNG HỌC
+============================================================
+
+2. BẢNG: lessons
+Mục đích: Lưu bài học chung của hệ thống.
+
+Cột:
+- id               BIGSERIAL      PRIMARY KEY
+- title            VARCHAR(255)   NOT NULL
+- slug             VARCHAR(255)   NOT NULL, UNIQUE
+- lesson_type      VARCHAR(30)    NOT NULL
+                                  Giá trị: vocabulary / grammar / kanji / reading / listening / writing / mixed / quiz
+- jlpt_level       VARCHAR(10)    NULL
+                                  Giá trị: N5 / N4 / N3 / N2 / N1
+- description      TEXT           NULL
+- content          TEXT           NULL
+- video_url        TEXT           NULL
+- audio_url        TEXT           NULL
+- thumbnail_url    TEXT           NULL
+- duration_seconds INT            NULL
+- is_published     BOOLEAN        NOT NULL
+- created_at       TIMESTAMPTZ    NOT NULL
+- updated_at       TIMESTAMPTZ    NOT NULL
+
+
+3. BẢNG: vocabulary
+Mục đích: Lưu từ vựng tiếng Nhật.
+
+Cột:
+- id               BIGSERIAL      PRIMARY KEY
+- lesson_number    INT            NULL
+                                  Số bài học lấy từ file từ vựng.
+- word             VARCHAR(255)   NOT NULL
+                                  Từ vựng tiếng Nhật.
+- kana             VARCHAR(255)   NULL
+                                  Cách đọc Hiragana/Katakana.
+- romaji           VARCHAR(255)   NULL
+                                  Cách đọc Romaji.
+- meaning_vi       TEXT           NOT NULL
+                                  Nghĩa tiếng Việt.
+- meaning_en       TEXT           NULL
+                                  Nghĩa tiếng Anh.
+- word_type        VARCHAR(50)    NULL
+                                  Loại từ: danh từ, động từ, tính từ,...
+- jlpt_level       VARCHAR(10)    NULL
+                                  Giá trị: N5 / N4 / N3 / N2 / N1
+- accent           VARCHAR(50)    NULL
+                                  Trọng âm/cao độ.
+- audio_url        TEXT           NULL
+                                  Link âm thanh.
+- image_url        TEXT           NULL
+                                  Link ảnh minh họa.
+- notes            TEXT           NULL
+                                  Ghi chú.
+- tags             TEXT[]         NULL
+                                  Danh sách nhãn phân loại.
+- created_at       TIMESTAMPTZ    NOT NULL
+- updated_at       TIMESTAMPTZ    NOT NULL
+
+
+4. BẢNG: vocabulary_examples
+Mục đích: Lưu câu ví dụ cho từ vựng.
+
+Cột:
+- id               BIGSERIAL      PRIMARY KEY
+- vocabulary_id    BIGINT         FOREIGN KEY → vocabulary.id
+- example_jp       TEXT           NOT NULL
+                                  Câu ví dụ tiếng Nhật.
+- example_kana     TEXT           NULL
+                                  Cách đọc câu ví dụ.
+- example_vi       TEXT           NOT NULL
+                                  Dịch nghĩa tiếng Việt.
+- audio_url        TEXT           NULL
+- created_at       TIMESTAMPTZ    NOT NULL
+
+
+5. BẢNG: kanji
+Mục đích: Lưu thông tin chữ Kanji.
+
+Cột:
+- id               BIGSERIAL      PRIMARY KEY
+- kanji            VARCHAR(10)    NOT NULL, UNIQUE
+                                  Chữ Kanji.
+- onyomi           TEXT           NULL
+                                  Âm On.
+- kunyomi          TEXT           NULL
+                                  Âm Kun.
+- meaning_vi       TEXT           NOT NULL
+                                  Nghĩa tiếng Việt.
+- meaning_en       TEXT           NULL
+                                  Nghĩa tiếng Anh.
+- stroke_count     INT            NULL
+                                  Số nét.
+- radical          VARCHAR(50)    NULL
+                                  Bộ thủ.
+- jlpt_level       VARCHAR(10)    NULL
+                                  Giá trị: N5 / N4 / N3 / N2 / N1
+- unicode_code     VARCHAR(20)    NULL
+                                  Mã Unicode.
+- writing_svg_url  TEXT           NULL
+                                  Link SVG hướng dẫn viết.
+- han_viet         VARCHAR(100)   NULL
+                                  Âm Hán Việt.
+- mnemonic         TEXT           NULL
+                                  Mẹo ghi nhớ Kanji.
+- created_at       TIMESTAMPTZ    NOT NULL
+- updated_at       TIMESTAMPTZ    NOT NULL
+
+
+6. BẢNG: kanji_examples
+Mục đích: Lưu ví dụ có chứa Kanji.
+
+Cột:
+- id               BIGSERIAL      PRIMARY KEY
+- kanji_id         BIGINT         FOREIGN KEY → kanji.id
+- example_jp       TEXT           NOT NULL
+                                  Từ/câu ví dụ tiếng Nhật.
+- example_kana     TEXT           NULL
+                                  Cách đọc.
+- example_vi       TEXT           NOT NULL
+                                  Nghĩa tiếng Việt.
+- audio_url        TEXT           NULL
+- created_at       TIMESTAMPTZ    NOT NULL
+
+
+7. BẢNG: grammar_points
+Mục đích: Lưu điểm/mẫu ngữ pháp tiếng Nhật.
+
+Cột:
+- id               BIGSERIAL      PRIMARY KEY
+- title            VARCHAR(255)   NULL
+                                  Tên hoặc tiêu đề ngữ pháp.
+- pattern          VARCHAR(255)   NOT NULL
+                                  Mẫu ngữ pháp.
+- meaning_vi       TEXT           NOT NULL
+                                  Nghĩa tiếng Việt.
+- formation        TEXT           NULL
+                                  Công thức/cấu trúc tạo câu.
+- explanation      TEXT           NULL
+                                  Giải thích cách dùng.
+- usage_note       TEXT           NULL
+                                  Ghi chú sử dụng.
+- jlpt_level       VARCHAR(10)    NULL
+                                  Giá trị: N5 / N4 / N3 / N2 / N1
+- restriction      TEXT           NULL
+                                  Giới hạn/lưu ý khi dùng.
+- nuance           TEXT           NULL
+                                  Sắc thái sử dụng.
+- created_at       TIMESTAMPTZ    NOT NULL
+- updated_at       TIMESTAMPTZ    NOT NULL
+
+
+8. BẢNG: grammar_examples
+Mục đích: Lưu câu ví dụ cho mẫu ngữ pháp.
+
+Cột:
+- id               BIGSERIAL      PRIMARY KEY
+- grammar_point_id BIGINT         FOREIGN KEY → grammar_points.id
+- example_jp       TEXT           NOT NULL
+                                  Câu ví dụ tiếng Nhật.
+- example_kana     TEXT           NULL
+                                  Cách đọc câu ví dụ.
+- example_vi       TEXT           NOT NULL
+                                  Dịch nghĩa tiếng Việt.
+- audio_url        TEXT           NULL
+- created_at       TIMESTAMPTZ    NOT NULL
+
+
+9. BẢNG: lesson_vocabularies
+Mục đích: Bảng trung gian liên kết bài học với từ vựng.
+
+Cột:
+- lesson_id        BIGINT         FOREIGN KEY → lessons.id
+- vocabulary_id    BIGINT         FOREIGN KEY → vocabulary.id
+- position         INT            NULL
+- is_main          BOOLEAN        NOT NULL
+
+Khóa chính:
+- PRIMARY KEY (lesson_id, vocabulary_id)
+
+
+10. BẢNG: lesson_kanjis
+Mục đích: Bảng trung gian liên kết bài học với Kanji.
+
+Cột:
+- lesson_id        BIGINT         FOREIGN KEY → lessons.id
+- kanji_id         BIGINT         FOREIGN KEY → kanji.id
+- position         INT            NULL
+
+Khóa chính:
+- PRIMARY KEY (lesson_id, kanji_id)
+
+
+11. BẢNG: lesson_grammar_points
+Mục đích: Bảng trung gian liên kết bài học với mẫu ngữ pháp.
+
+Cột:
+- lesson_id        BIGINT         FOREIGN KEY → lessons.id
+- grammar_point_id BIGINT         FOREIGN KEY → grammar_points.id
+- position         INT            NULL
+
+Khóa chính:
+- PRIMARY KEY (lesson_id, grammar_point_id)
+
+
+============================================================
+NHÓM 3 — TIẾN ĐỘ HỌC
+============================================================
+
+12. BẢNG: user_lesson_progress
+Mục đích: Theo dõi tiến độ học bài của người dùng.
+
+Cột:
+- id               BIGSERIAL      PRIMARY KEY
+- user_id          BIGINT         FOREIGN KEY → users.id
+- lesson_id        BIGINT         FOREIGN KEY → lessons.id
+- status           VARCHAR(20)    NOT NULL
+                                  Giá trị: not_started / in_progress / completed
+- progress_percent NUMERIC(5,2)   NOT NULL
+- started_at       TIMESTAMPTZ    NULL
+- completed_at     TIMESTAMPTZ    NULL
+- last_accessed_at TIMESTAMPTZ    NULL
+
+
+13. BẢNG: user_vocab_progress
+Mục đích: Theo dõi tiến độ học từ vựng theo từng user.
+
+Cột:
+- id               BIGSERIAL      PRIMARY KEY
+- user_id          BIGINT         FOREIGN KEY → users.id
+- vocabulary_id    BIGINT         FOREIGN KEY → vocabulary.id
+- mastery_level    INT            NOT NULL
+- last_reviewed_at TIMESTAMPTZ    NULL
+- next_review_at   TIMESTAMPTZ    NULL
+- correct_count    INT            NOT NULL
+- wrong_count      INT            NOT NULL
+- ease_factor      NUMERIC(4,2)   NULL
+                                  Hệ số dùng cho SRS/spaced repetition.
+
+
+14. BẢNG: user_kanji_progress
+Mục đích: Theo dõi tiến độ học Kanji theo từng user.
+
+Cột:
+- id               BIGSERIAL      PRIMARY KEY
+- user_id          BIGINT         FOREIGN KEY → users.id
+- kanji_id         BIGINT         FOREIGN KEY → kanji.id
+- mastery_level    INT            NOT NULL
+- last_reviewed_at TIMESTAMPTZ    NULL
+- next_review_at   TIMESTAMPTZ    NULL
+- correct_count    INT            NOT NULL
+- wrong_count      INT            NOT NULL
+- ease_factor      NUMERIC(4,2)   NULL
+                                  Hệ số dùng cho SRS/spaced repetition.
+
+
+============================================================
+NHÓM 4 — QUIZ
+============================================================
+
+15. BẢNG: quizzes
+Mục đích: Lưu bài quiz/kiểm tra.
+
+Cột:
+- id                   BIGSERIAL      PRIMARY KEY
+- lesson_id            BIGINT         FOREIGN KEY → lessons.id
+- title                VARCHAR(255)   NOT NULL
+- quiz_type            VARCHAR(20)    NOT NULL
+                                      Giá trị: practice / test / exam
+- time_limit_seconds   INT            NULL
+- passing_score        NUMERIC(5,2)   NULL
+- is_published         BOOLEAN        NOT NULL
+- created_at           TIMESTAMPTZ    NOT NULL
+- updated_at           TIMESTAMPTZ    NOT NULL
+
+
+16. BẢNG: quiz_questions
+Mục đích: Lưu câu hỏi trong quiz.
+
+Cột:
+- id               BIGSERIAL      PRIMARY KEY
+- quiz_id          BIGINT         FOREIGN KEY → quizzes.id
+- question_text    TEXT           NOT NULL
+- question_type    VARCHAR(30)    NOT NULL
+                                  Giá trị ví dụ: mcq / fill_blank / listening / matching / reorder / handwriting
+- audio_url        TEXT           NULL
+- image_url        TEXT           NULL
+- explanation      TEXT           NULL
+- correct_text     TEXT           NULL
+- position         INT            NOT NULL
+- created_at       TIMESTAMPTZ    NOT NULL
+
+
+17. BẢNG: quiz_choices
+Mục đích: Lưu lựa chọn đáp án cho câu hỏi trắc nghiệm.
+
+Cột:
+- id               BIGSERIAL      PRIMARY KEY
+- question_id      BIGINT         FOREIGN KEY → quiz_questions.id
+- choice_text      TEXT           NOT NULL
+- is_correct       BOOLEAN        NOT NULL
+- position         INT            NOT NULL
+
+
+18. BẢNG: quiz_attempts
+Mục đích: Lưu lượt làm quiz của người dùng.
+
+Cột:
+- id               BIGSERIAL      PRIMARY KEY
+- quiz_id          BIGINT         FOREIGN KEY → quizzes.id
+- user_id          BIGINT         FOREIGN KEY → users.id
+- started_at       TIMESTAMPTZ    NOT NULL
+- submitted_at     TIMESTAMPTZ    NULL
+- score            NUMERIC(5,2)   NULL
+- status           VARCHAR(20)    NOT NULL
+                                  Giá trị: in_progress / submitted / graded
+
+
+19. BẢNG: quiz_answers
+Mục đích: Lưu câu trả lời của người dùng trong quiz.
+
+Cột:
+- id                  BIGSERIAL      PRIMARY KEY
+- attempt_id          BIGINT         FOREIGN KEY → quiz_attempts.id
+- question_id         BIGINT         FOREIGN KEY → quiz_questions.id
+- selected_choice_id  BIGINT         FOREIGN KEY → quiz_choices.id
+- answer_text         TEXT           NULL
+- is_correct          BOOLEAN        NULL
+- answered_at         TIMESTAMPTZ    NOT NULL
+
+
+============================================================
+NHÓM 5 — AI / CHAT / VIẾT / NHẬN DIỆN CHỮ
+============================================================
+
+20. BẢNG: ai_chat_sessions
+Mục đích: Lưu phiên chat AI của người dùng.
+
+Cột:
+- id               BIGSERIAL      PRIMARY KEY
+- user_id          BIGINT         FOREIGN KEY → users.id
+- title            VARCHAR(255)   NULL
+- status           VARCHAR(20)    NOT NULL
+                                  Giá trị: active / archived / closed
+- created_at       TIMESTAMPTZ    NOT NULL
+- updated_at       TIMESTAMPTZ    NOT NULL
+
+
+21. BẢNG: ai_chat_messages
+Mục đích: Lưu từng tin nhắn trong phiên chat AI.
+
+Cột:
+- id               BIGSERIAL      PRIMARY KEY
+- session_id       BIGINT         FOREIGN KEY → ai_chat_sessions.id
+- sender           VARCHAR(20)    NOT NULL
+                                  Giá trị: user / assistant / system
+- message_text     TEXT           NOT NULL
+- metadata         JSONB          NULL
+- created_at       TIMESTAMPTZ    NOT NULL
+
+
+22. BẢNG: handwriting_submissions
+Mục đích: Lưu bài nộp nhận diện chữ viết tay.
+
+Cột:
+- id               BIGSERIAL      PRIMARY KEY
+- user_id          BIGINT         FOREIGN KEY → users.id
+- lesson_id        BIGINT         FOREIGN KEY → lessons.id
+- image_url        TEXT           NOT NULL
+- input_type       VARCHAR(20)    NOT NULL
+                                  Giá trị: hiragana / katakana / kanji / word / sentence
+- expected_text    TEXT           NULL
+- extracted_text   TEXT           NULL
+- status           VARCHAR(20)    NOT NULL
+                                  Giá trị: pending / processed / failed
+- created_at       TIMESTAMPTZ    NOT NULL
+- updated_at       TIMESTAMPTZ    NOT NULL
+
+
+23. BẢNG: handwriting_predictions
+Mục đích: Lưu kết quả dự đoán từ ảnh chữ viết tay.
+
+Cột:
+- id               BIGSERIAL      PRIMARY KEY
+- submission_id    BIGINT         FOREIGN KEY → handwriting_submissions.id
+- predicted_text   TEXT           NOT NULL
+- confidence       NUMERIC(5,4)   NULL
+- is_correct       BOOLEAN        NULL
+- feedback         TEXT           NULL
+- model_version    VARCHAR(100)   NULL
+- top_candidates   JSONB          NULL
+- created_at       TIMESTAMPTZ    NOT NULL
+
+
+24. BẢNG: ai_writing_reviews
+Mục đích: Lưu kết quả AI sửa/chấm bài viết tiếng Nhật.
+
+Cột:
+- id               BIGSERIAL      PRIMARY KEY
+- user_id          BIGINT         FOREIGN KEY → users.id
+- lesson_id        BIGINT         FOREIGN KEY → lessons.id
+- original_text    TEXT           NOT NULL
+- corrected_text   TEXT           NULL
+- feedback         TEXT           NULL
+- score            NUMERIC(5,2)   NULL
+- review_type      VARCHAR(20)    NOT NULL
+                                  Giá trị: correction / scoring / correction_and_scoring
+- created_at       TIMESTAMPTZ    NOT NULL
+
+
+============================================================
+NHÓM 6 — LOG
+============================================================
+
+25. BẢNG: learning_logs
+Mục đích: Lưu log hoạt động học tập của người dùng.
+
+Cột:
+- id               BIGSERIAL      PRIMARY KEY
+- user_id          BIGINT         FOREIGN KEY → users.id
+- lesson_id        BIGINT         FOREIGN KEY → lessons.id
+- vocabulary_id    BIGINT         FOREIGN KEY → vocabulary.id
+- kanji_id         BIGINT         FOREIGN KEY → kanji.id
+- grammar_point_id BIGINT         FOREIGN KEY → grammar_points.id
+- quiz_id          BIGINT         FOREIGN KEY → quizzes.id
+- submission_id    BIGINT         FOREIGN KEY → handwriting_submissions.id
+- activity_type    VARCHAR(50)    NOT NULL
+- details          JSONB          NULL
+- created_at       TIMESTAMPTZ    NOT NULL
+
+
+============================================================
+TÓM TẮT DANH SÁCH BẢNG
+============================================================
+
+1. users
+2. lessons
+3. vocabulary
+4. vocabulary_examples
+5. kanji
+6. kanji_examples
+7. grammar_points
+8. grammar_examples
+9. lesson_vocabularies
+10. lesson_kanjis
+11. lesson_grammar_points
+12. user_lesson_progress
+13. user_vocab_progress
+14. user_kanji_progress
+15. quizzes
+16. quiz_questions
+17. quiz_choices
+18. quiz_attempts
+19. quiz_answers
+20. ai_chat_sessions
+21. ai_chat_messages
+22. handwriting_submissions
+23. handwriting_predictions
+24. ai_writing_reviews
+25. learning_logs
+
+
+============================================================
+CÁC CỘT ĐÃ THÊM SAU KHI IMPORT DỮ LIỆU
+============================================================
+
+vocabulary:
+- lesson_number INT
+- tags TEXT[]
+
+kanji:
+- han_viet VARCHAR(100)
+- mnemonic TEXT
+
+grammar_points:
+- formation TEXT
+- restriction TEXT
+- nuance TEXT
+
+
+============================================================
+CÁC CỘT KHÔNG DÙNG / ĐÃ BỎ
+============================================================
+
+- source_id
+- lessonnum
+- mnemonic_radical
+
+
+============================================================
+QUERY KIỂM TRA CẤU TRÚC TRỰC TIẾP TRONG POSTGRESQL
+============================================================
+
+SELECT 
+    table_name,
+    column_name,
+    data_type,
+    is_nullable
+FROM information_schema.columns
+WHERE table_schema = 'public'
+ORDER BY table_name, ordinal_position;
+
+============================================================
+QUERY KIỂM TRA SỐ DÒNG DỮ LIỆU CHÍNH
+============================================================
+
+SELECT 'vocabulary' AS table_name, COUNT(*) FROM vocabulary
+UNION ALL
+SELECT 'kanji', COUNT(*) FROM kanji
+UNION ALL
+SELECT 'grammar_points', COUNT(*) FROM grammar_points
+UNION ALL
+SELECT 'vocabulary_examples', COUNT(*) FROM vocabulary_examples
+UNION ALL
+SELECT 'kanji_examples', COUNT(*) FROM kanji_examples
+UNION ALL
+SELECT 'grammar_examples', COUNT(*) FROM grammar_examples;

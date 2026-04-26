@@ -1,0 +1,143 @@
+.profile-main {
+  gap: 16px;
+}
+
+.profile-card {
+  border: 1px solid var(--stroke);
+  border-radius: 16px;
+  background: var(--panel-bg);
+  box-shadow: var(--shadow-soft);
+  padding: 20px;
+}
+
+.profile-header {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.profile-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+  font-family: var(--font-head);
+  font-size: 24px;
+  font-weight: 700;
+  background: linear-gradient(140deg, #f2298a, #7b54f6, #5360fb);
+}
+
+.profile-identity h1 {
+  margin: 0;
+  font-family: var(--font-head);
+  font-size: 31px;
+  color: var(--text-main);
+}
+
+.profile-identity p {
+  margin: 6px 0 0;
+  color: var(--text-muted);
+  font-size: 15px;
+}
+
+.profile-actions {
+  margin-top: 16px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.profile-logout-btn,
+.profile-back-link {
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  border: 0;
+}
+
+.profile-logout-btn {
+  color: #ffffff;
+  cursor: pointer;
+  background: linear-gradient(130deg, #ec3f76, #d72f63);
+}
+
+.profile-back-link {
+  color: #32405e;
+  border: 1px solid #d4dced;
+  background: #ffffff;
+}
+
+.profile-feedback {
+  margin: 14px 0 0;
+  color: #344054;
+}
+
+.profile-feedback--error {
+  color: #b42318;
+}
+
+.profile-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.profile-stat-card {
+  border: 1px solid var(--stroke);
+  border-radius: 14px;
+  background: var(--panel-bg);
+  box-shadow: var(--shadow-soft);
+  padding: 16px;
+}
+
+.profile-stat-label {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.profile-stat-value {
+  margin: 8px 0 0;
+  font-family: var(--font-head);
+  font-size: 30px;
+  color: var(--text-main);
+}
+
+@media (max-width: 980px) {
+  .profile-stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .profile-card {
+    padding: 16px;
+  }
+
+  .profile-avatar {
+    width: 62px;
+    height: 62px;
+    font-size: 20px;
+  }
+
+  .profile-identity h1 {
+    font-size: 25px;
+  }
+
+  .profile-actions {
+    flex-direction: column;
+  }
+
+  .profile-logout-btn,
+  .profile-back-link {
+    text-align: center;
+  }
+
+  .profile-stats-grid {
+    grid-template-columns: 1fr;
+  }
+}

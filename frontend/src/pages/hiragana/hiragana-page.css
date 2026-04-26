@@ -1,0 +1,337 @@
+.hiragana-page {
+  min-height: 100vh;
+  padding: 20px;
+  background:
+    radial-gradient(1200px 420px at -5% -20%, rgba(242, 41, 138, 0.1), transparent 58%),
+    radial-gradient(1000px 380px at 105% -12%, rgba(83, 96, 251, 0.12), transparent 58%),
+    #f3f5fb;
+}
+
+.hiragana-main {
+  width: min(1240px, 100%);
+  margin: 0 auto;
+  display: grid;
+  gap: 22px;
+}
+
+.hiragana-progress-card {
+  border-radius: 16px;
+  padding: 24px 24px 20px;
+  color: #ffffff;
+  background: linear-gradient(130deg, #f62e8d 0%, #ff1f6d 100%);
+  box-shadow: 0 16px 32px rgba(248, 46, 127, 0.28);
+}
+
+.hiragana-progress-card h1 {
+  margin: 0;
+  font-size: clamp(30px, 3.2vw, 46px);
+  line-height: 1.1;
+}
+
+.hiragana-progress-card p {
+  margin: 8px 0 0;
+  font-size: clamp(16px, 1.8vw, 31px);
+  opacity: 0.95;
+}
+
+.hiragana-progress-meta {
+  margin-top: 16px;
+  font-size: clamp(15px, 1.3vw, 22px);
+  font-weight: 600;
+}
+
+.hiragana-progress-track {
+  height: 10px;
+  border-radius: 999px;
+  margin-top: 10px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.hiragana-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: #ffffff;
+  transition: width 0.25s ease;
+}
+
+.hiragana-content-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.hiragana-card {
+  border-radius: 14px;
+  border: 1px solid #e4e8f3;
+  background: #ffffff;
+  box-shadow: 0 8px 20px rgba(17, 24, 39, 0.07);
+  padding: 18px;
+}
+
+.hiragana-card-title {
+  margin: 0 0 14px;
+  font-size: clamp(30px, 2.6vw, 40px);
+  color: #131a2a;
+}
+
+.hiragana-chart-grid {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.hiragana-char-btn {
+  position: relative;
+  min-height: 66px;
+  border: 1px solid #dde2ef;
+  border-radius: 8px;
+  background: #ffffff;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.hiragana-char-btn:hover {
+  transform: translateY(-1px);
+  border-color: #f67cb6;
+  box-shadow: 0 8px 16px rgba(246, 46, 141, 0.14);
+}
+
+.hiragana-char-btn.is-selected {
+  border-color: #f62e8d;
+  background: #ffe7f3;
+}
+
+.hiragana-char-btn.is-mastered {
+  border-color: #95d9b5;
+}
+
+.hiragana-char-glyph {
+  font-size: clamp(31px, 2vw, 37px);
+  line-height: 1;
+  color: #0f1627;
+}
+
+.hiragana-char-romaji {
+  font-size: 12px;
+  color: #6f7890;
+  line-height: 1;
+}
+
+.hiragana-char-check {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: #18aa5a;
+  color: #ffffff;
+}
+
+.hiragana-char-check-icon {
+  width: 11px;
+  height: 11px;
+}
+
+.hiragana-detail-card {
+  position: sticky;
+  top: 94px;
+  padding: 18px;
+}
+
+.hiragana-detail-empty {
+  min-height: 340px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  color: #74809a;
+  gap: 10px;
+}
+
+.hiragana-detail-empty-icon {
+  width: 54px;
+  height: 54px;
+  opacity: 0.55;
+}
+
+.hiragana-detail-body {
+  display: grid;
+  gap: 16px;
+}
+
+.hiragana-detail-header {
+  text-align: center;
+}
+
+.hiragana-detail-character {
+  font-size: clamp(78px, 5.4vw, 108px);
+  line-height: 1;
+  color: #11182a;
+}
+
+.hiragana-detail-romaji {
+  margin-top: 4px;
+  font-size: clamp(41px, 2.4vw, 48px);
+  color: #4f566a;
+}
+
+.hiragana-detail-actions {
+  display: grid;
+  gap: 8px;
+}
+
+.hiragana-action-btn {
+  border: 0;
+  width: 100%;
+  min-height: 42px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.hiragana-action-btn--play {
+  color: #ffffff;
+  background: #f62e8d;
+}
+
+.hiragana-action-btn--play:hover {
+  background: #e92583;
+}
+
+.hiragana-action-btn--master {
+  color: #525c73;
+  background: #eef1f6;
+}
+
+.hiragana-action-btn--master:hover {
+  background: #e7ecf4;
+}
+
+.hiragana-action-btn--master.is-active {
+  color: #117743;
+  background: #dff5e7;
+}
+
+.hiragana-action-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.hiragana-writing-tips {
+  border-top: 1px solid #e8ebf4;
+  padding-top: 14px;
+}
+
+.hiragana-writing-tips h3 {
+  margin: 0;
+  font-size: 31px;
+  color: #141b2d;
+}
+
+.hiragana-writing-tips p {
+  margin: 8px 0 0;
+  font-size: 16px;
+  line-height: 1.4;
+  color: #5d6782;
+}
+
+.hiragana-study-tips {
+  padding: 22px;
+}
+
+.hiragana-study-tips-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.hiragana-tip-item h3 {
+  margin: 0;
+  font-size: 34px;
+  color: #11192e;
+}
+
+.hiragana-tip-item p {
+  margin: 8px 0 0;
+  font-size: 19px;
+  line-height: 1.4;
+  color: #59627d;
+}
+
+@media (max-width: 1160px) {
+  .hiragana-chart-grid {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+  }
+
+  .hiragana-content-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hiragana-detail-card {
+    position: static;
+  }
+}
+
+@media (max-width: 760px) {
+  .hiragana-page {
+    padding: 12px;
+  }
+
+  .hiragana-main {
+    gap: 14px;
+  }
+
+  .hiragana-progress-card {
+    padding: 18px 14px;
+  }
+
+  .hiragana-card {
+    padding: 14px;
+  }
+
+  .hiragana-card-title,
+  .hiragana-tip-item h3,
+  .hiragana-writing-tips h3 {
+    font-size: 24px;
+  }
+
+  .hiragana-progress-card p,
+  .hiragana-tip-item p,
+  .hiragana-writing-tips p {
+    font-size: 15px;
+  }
+
+  .hiragana-chart-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .hiragana-detail-character {
+    font-size: 72px;
+  }
+
+  .hiragana-detail-romaji {
+    font-size: 34px;
+  }
+
+  .hiragana-action-btn {
+    font-size: 15px;
+  }
+
+  .hiragana-study-tips-grid {
+    grid-template-columns: 1fr;
+  }
+}
