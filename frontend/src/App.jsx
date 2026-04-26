@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import { AuthPage } from './pages/auth/auth-page'
 import { DashboardPage } from './pages/dashboard/dashboard-page'
 import { DictionaryPage } from './pages/dictionary/dictionary-page'
+import { FlashcardsPage } from './pages/flashcards/flashcards-page'
 import { HiraganaPage } from './pages/hiragana/hiragana-page'
 import { KatakanaPage } from './pages/katakana/katakana-page'
 import { LessonDetailPage } from './pages/lessons/lesson-detail-page'
@@ -19,6 +20,7 @@ function App() {
       <Route path="/lessons/:level/:lessonNumber" element={<LessonDetailPage />} />
       <Route path="/dictionary" element={<DictionaryPage />} />
       <Route path="/directory" element={<DictionaryPage redirectToDictionary />} />
+      <Route path="/flashcards" element={<FlashcardsPage />} />
       <Route path="/auth" element={<AuthPage mode="login" />} />
       <Route path="/auth/register" element={<AuthPage mode="register" />} />
       <Route path="/profile" element={<ProfilePage />} />
