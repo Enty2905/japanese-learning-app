@@ -9,7 +9,7 @@ function getErrorMessage(error) {
     return error.message
   }
 
-  return 'Unable to search dictionary.'
+  return 'Không tra cứu được từ điển.'
 }
 
 export async function searchDictionary({ query, type }) {

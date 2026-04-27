@@ -9,7 +9,7 @@ function getErrorMessage(error) {
     return error.message
   }
 
-  return 'Unable to load lesson data.'
+  return 'Không tải được dữ liệu bài học.'
 }
 
 export async function fetchLessonsByLevel(level) {
@@ -17,7 +17,7 @@ export async function fetchLessonsByLevel(level) {
     const response = await apiClient.get(`/lessons/${level}`)
     return Array.isArray(response.data?.lessons) ? response.data.lessons : []
   } catch (error) {
-    throw new Error(getErrorMessage(error))
+    throw new Error(getErrorMessage(error), { cause: error })
   }
 }
 
@@ -26,6 +26,6 @@ export async function fetchLessonDetail(level, lessonNumber) {
     const response = await apiClient.get(`/lessons/${level}/${lessonNumber}`)
     return response.data
   } catch (error) {
-    throw new Error(getErrorMessage(error))
+    throw new Error(getErrorMessage(error), { cause: error })
   }
 }

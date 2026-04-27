@@ -20,12 +20,12 @@ function createLessonContent(lesson, normalizedVocabulary) {
     return lesson.content
   }
 
-  const topic = lesson?.title || 'Lesson'
+  const topic = lesson?.title || 'Bài học'
   const firstVocabulary = normalizedVocabulary[0]
     ? `${normalizedVocabulary[0].japanese} (${normalizedVocabulary[0].romaji})`
-    : 'No vocabulary yet'
+    : 'Chưa có từ vựng'
 
-  return `# ${topic}\nIn this lesson, we will practice vocabulary from the database.\n\n## Vocabulary\n${firstVocabulary}`
+  return `# ${topic}\nTrong bài này, chúng ta sẽ luyện từ vựng từ cơ sở dữ liệu.\n\n## Từ vựng\n${firstVocabulary}`
 }
 
 function renderLessonContent(content) {
@@ -134,10 +134,10 @@ export function LessonDetailPage() {
 
         <main className="lessons-main">
           <section className="lesson-detail-card">
-            <h1>Lesson Locked</h1>
-            <p>Complete the previous lesson before opening this one.</p>
+            <h1>Bài học đang bị khóa</h1>
+            <p>Hãy hoàn thành bài trước trước khi mở bài này.</p>
             <Link to={`/lessons/${level}`} className="lesson-primary-btn">
-              Back to {level.toUpperCase()} Lessons
+              Quay lại bài học {level.toUpperCase()}
             </Link>
           </section>
         </main>
@@ -152,7 +152,7 @@ export function LessonDetailPage() {
 
         <main className="lessons-main">
           <section className="lesson-detail-card">
-            <p className="lessons-feedback">Loading lesson from database...</p>
+            <p className="lessons-feedback">Đang tải bài học từ cơ sở dữ liệu...</p>
           </section>
         </main>
       </div>
@@ -167,10 +167,10 @@ export function LessonDetailPage() {
         <main className="lessons-main">
           <section className="lesson-detail-card">
             <p className="lessons-feedback lessons-feedback--error">
-              {errorMessage || 'Lesson not found.'}
+              {errorMessage || 'Không tìm thấy bài học.'}
             </p>
             <Link to={`/lessons/${level}`} className="lesson-primary-btn">
-              Back to Lessons
+              Quay lại bài học
             </Link>
           </section>
         </main>
@@ -202,7 +202,7 @@ export function LessonDetailPage() {
         <div>
           <Link to={`/lessons/${level}`} className="lesson-back-link">
             <ArrowLeftIcon className="lesson-back-icon" />
-            Back to Lessons
+            Quay lại bài học
           </Link>
         </div>
 
@@ -217,16 +217,16 @@ export function LessonDetailPage() {
             </div>
 
             {isCompleted ? (
-              <div className="lesson-completed-badge" aria-label="Completed">
+              <div className="lesson-completed-badge" aria-label="Đã hoàn thành">
                 <CheckIcon className="lesson-completed-icon" />
               </div>
             ) : null}
           </div>
 
           <div className="lessons-hero-meta">
-            <span>{lesson.estimatedTime} minutes</span>
+            <span>{lesson.estimatedTime} phút</span>
             <span>•</span>
-            <span>{normalizedVocabulary.length} vocabulary words</span>
+            <span>{normalizedVocabulary.length} từ vựng</span>
           </div>
         </section>
 
@@ -239,11 +239,11 @@ export function LessonDetailPage() {
             </section>
 
             <section className="lesson-detail-card">
-              <h2 className="lesson-section-title">Practice Exercises</h2>
+              <h2 className="lesson-section-title">Bài luyện tập</h2>
 
               <div className="lesson-exercises-list">
                 <article className="lesson-exercise-item">
-                  <p className="lesson-exercise-title">Write each vocabulary word 5 times</p>
+                  <p className="lesson-exercise-title">Viết mỗi từ vựng 5 lần</p>
                   <div className="lesson-word-chips">
                     {normalizedVocabulary.slice(0, 3).map((word) => (
                       <span key={`chip-${word.japanese}`} className="lesson-word-chip">
@@ -254,16 +254,16 @@ export function LessonDetailPage() {
                 </article>
 
                 <article className="lesson-exercise-item">
-                  <p className="lesson-exercise-title">Create sentences using the new vocabulary</p>
+                  <p className="lesson-exercise-title">Đặt câu với từ vựng mới</p>
                   <p className="lesson-exercise-note">
-                    Try to form at least 3 sentences using words from this lesson.
+                    Hãy thử đặt ít nhất 3 câu với các từ trong bài học này.
                   </p>
                 </article>
 
                 <article className="lesson-exercise-item">
-                  <p className="lesson-exercise-title">Listen and repeat</p>
+                  <p className="lesson-exercise-title">Nghe và lặp lại</p>
                   <p className="lesson-exercise-note">
-                    Practice pronunciation by listening to native speakers and repeating after them.
+                    Luyện phát âm bằng cách nghe người bản xứ và lặp lại theo họ.
                   </p>
                 </article>
               </div>
@@ -276,13 +276,13 @@ export function LessonDetailPage() {
               disabled={isCompleted}
             >
               <CheckIcon className="lesson-mark-icon" />
-              <span>{isCompleted ? 'Completed' : 'Mark as Complete'}</span>
+              <span>{isCompleted ? 'Đã hoàn thành' : 'Đánh dấu hoàn thành'}</span>
             </button>
           </div>
 
           <aside className="lesson-vocabulary-sidebar">
             <section className="lesson-vocabulary-card">
-              <h3>Vocabulary</h3>
+              <h3>Từ vựng</h3>
 
               <div className="lesson-vocabulary-list">
                 {normalizedVocabulary.map((word, index) => (
@@ -300,7 +300,7 @@ export function LessonDetailPage() {
                         type="button"
                         className="lesson-vocabulary-sound-btn"
                         onClick={() => playVocabularyWord(word)}
-                        aria-label={`Play pronunciation for ${word.romaji}`}
+                        aria-label={`Nghe phát âm ${word.romaji}`}
                       >
                         <VolumeIcon className="lesson-vocabulary-sound-icon" />
                       </button>

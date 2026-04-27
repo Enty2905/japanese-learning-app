@@ -18,12 +18,12 @@ function authenticateToken(req, res, next) {
   try {
     const token = extractBearerToken(req.headers.authorization);
     if (!token) {
-      throw createHttpError(401, 'Authentication token is required.');
+      throw createHttpError(401, 'Vui lòng đăng nhập để tiếp tục.');
     }
 
     const payload = verifyAccessToken(token);
     if (!payload) {
-      throw createHttpError(401, 'Invalid or expired authentication token.');
+      throw createHttpError(401, 'Phiên đăng nhập không hợp lệ hoặc đã hết hạn.');
     }
 
     req.authUser = {

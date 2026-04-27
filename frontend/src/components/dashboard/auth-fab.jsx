@@ -22,17 +22,17 @@ export function AuthFab() {
 
   if (isAuthenticated) {
     return (
-      <Link to="/profile" className="auth-fab auth-fab--avatar" aria-label="Open profile">
+      <Link to="/profile" className="auth-fab auth-fab--avatar" aria-label="Mở hồ sơ">
         <span className="auth-fab-avatar-text">{buildAvatarLabel(user)}</span>
       </Link>
     )
   }
 
   return (
-    <Link to="/auth" className="auth-fab" aria-label="Open login or sign up page">
-      <span>Login</span>
+    <Link to="/auth" className="auth-fab" aria-label="Mở trang đăng nhập hoặc đăng ký">
+      <span>Đăng nhập</span>
       <span>/</span>
-      <span>Sign Up</span>
+      <span>Đăng ký</span>
     </Link>
   )
 }

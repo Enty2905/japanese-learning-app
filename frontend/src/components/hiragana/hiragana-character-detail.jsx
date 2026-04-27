@@ -11,7 +11,7 @@ export function HiraganaCharacterDetail({
       <aside className="hiragana-card hiragana-detail-card">
         <div className="hiragana-detail-empty">
           <LanguagesIcon className="hiragana-detail-empty-icon" />
-          <p>Select a character to see details</p>
+          <p>Chọn một chữ để xem chi tiết</p>
         </div>
       </aside>
     )
@@ -34,7 +34,7 @@ export function HiraganaCharacterDetail({
             onClick={onPlaySound}
           >
             <VolumeIcon className="hiragana-action-icon" />
-            Play Sound
+            Nghe phát âm
           </button>
 
           <button
@@ -45,15 +45,14 @@ export function HiraganaCharacterDetail({
             onClick={() => onToggleMastered(selectedCharacter.character)}
           >
             <CheckIcon className="hiragana-action-icon" />
-            {isMastered ? 'Mastered' : 'Mark as Mastered'}
+            {isMastered ? 'Đã thuộc' : 'Đánh dấu đã thuộc'}
           </button>
         </div>
 
         <section className="hiragana-writing-tips">
-          <h3>Writing Tips</h3>
+          <h3>Mẹo luyện viết</h3>
           <p>
-            Practice writing this character by following the stroke order. Write
-            it multiple times to build muscle memory.
+            Luyện viết chữ này theo đúng thứ tự nét. Viết nhiều lần để tạo phản xạ tay.
           </p>
         </section>
       </div>

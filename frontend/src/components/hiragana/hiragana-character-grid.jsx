@@ -8,7 +8,7 @@ export function HiraganaCharacterGrid({
 }) {
   return (
     <section className="hiragana-card">
-      <h2 className="hiragana-card-title">Character Chart</h2>
+      <h2 className="hiragana-card-title">Bảng chữ</h2>
       <div className="hiragana-chart-grid">
         {characters.map((character) => {
           const isSelected = selectedCharacter?.character === character.character
@@ -27,7 +27,7 @@ export function HiraganaCharacterGrid({
               <span className="hiragana-char-romaji">{character.romaji}</span>
 
               {isMastered ? (
-                <span className="hiragana-char-check" aria-label="Mastered">
+                <span className="hiragana-char-check" aria-label="Đã thuộc">
                   <CheckIcon className="hiragana-char-check-icon" />
                 </span>
               ) : null}

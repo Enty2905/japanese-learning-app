@@ -3,7 +3,7 @@ function normalizeVocabularyEntry(entry, index) {
     return {
       japanese: `単語${index}`,
       romaji: entry,
-      english: `Word ${index}`,
+      english: `Từ ${index}`,
     }
   }
 
@@ -11,14 +11,14 @@ function normalizeVocabularyEntry(entry, index) {
     return {
       japanese: entry.japanese || entry.word || `単語${index}`,
       romaji: entry.romaji || entry.reading || `tango${index}`,
-      english: entry.english || entry.meaning || `Word ${index}`,
+      english: entry.meaningVi || entry.english || entry.meaning || `Từ ${index}`,
     }
   }
 
   return {
     japanese: `単語${index}`,
     romaji: `tango${index}`,
-    english: `Word ${index}`,
+    english: `Từ ${index}`,
   }
 }
 

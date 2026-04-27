@@ -12,12 +12,23 @@ const MAX_DESCRIPTION_LENGTH = 1000;
 const MAX_FRONT_LENGTH = 255;
 const MAX_BACK_LENGTH = 2000;
 const MAX_SET_CARDS = 200;
+const FIELD_LABELS = {
+  setId: 'Mã bộ flashcard',
+  title: 'Tên bộ flashcard',
+  description: 'Mô tả',
+  frontText: 'Mặt trước',
+  backText: 'Mặt sau',
+};
+
+function getFieldLabel(fieldName) {
+  return FIELD_LABELS[fieldName] || fieldName;
+}
 
 function parsePositiveInteger(value, fieldName) {
   const parsed = Number(value);
 
   if (!Number.isInteger(parsed) || parsed <= 0) {
-    throw createHttpError(400, `${fieldName} must be a positive integer.`);
+    throw createHttpError(400, `${getFieldLabel(fieldName)} phải là số nguyên dương.`);
   }
 
   return parsed;
@@ -27,11 +38,11 @@ function normalizeRequiredText(value, fieldName, maxLength) {
   const text = typeof value === 'string' ? value.trim() : '';
 
   if (!text) {
-    throw createHttpError(400, `${fieldName} is required.`);
+    throw createHttpError(400, `${getFieldLabel(fieldName)} là bắt buộc.`);
   }
 
   if (text.length > maxLength) {
-    throw createHttpError(400, `${fieldName} is too long.`);
+    throw createHttpError(400, `${getFieldLabel(fieldName)} quá dài.`);
   }
 
   return text;
@@ -41,7 +52,7 @@ function normalizeOptionalText(value, fieldName, maxLength) {
   const text = typeof value === 'string' ? value.trim() : '';
 
   if (text.length > maxLength) {
-    throw createHttpError(400, `${fieldName} is too long.`);
+    throw createHttpError(400, `${getFieldLabel(fieldName)} quá dài.`);
   }
 
   return text || null;
@@ -51,11 +62,11 @@ function normalizeCards(payload) {
   const rawCards = Array.isArray(payload?.cards) ? payload.cards : [];
 
   if (rawCards.length === 0) {
-    throw createHttpError(400, 'At least one flashcard is required.');
+    throw createHttpError(400, 'Cần ít nhất một flashcard.');
   }
 
   if (rawCards.length > MAX_SET_CARDS) {
-    throw createHttpError(400, `A set can contain up to ${MAX_SET_CARDS} flashcards.`);
+    throw createHttpError(400, `Một bộ chỉ có thể chứa tối đa ${MAX_SET_CARDS} flashcard.`);
   }
 
   return rawCards.map((card) => ({
@@ -103,7 +114,7 @@ async function getMyFlashcardSet(userId, setIdInput) {
   const flashcardSet = await findFlashcardSetById(userId, setId);
 
   if (!flashcardSet) {
-    throw createHttpError(404, 'Flashcard set not found.');
+    throw createHttpError(404, 'Không tìm thấy bộ flashcard.');
   }
 
   const cards = await listFlashcardsBySetId(userId, setId);
@@ -129,7 +140,7 @@ async function removeMyFlashcardSet(userId, setIdInput) {
   const deletedRow = await deleteFlashcardSet(userId, setId);
 
   if (!deletedRow) {
-    throw createHttpError(404, 'Flashcard set not found.');
+    throw createHttpError(404, 'Không tìm thấy bộ flashcard.');
   }
 }
 

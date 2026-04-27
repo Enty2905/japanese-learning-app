@@ -9,7 +9,7 @@ function getErrorMessage(error) {
     return error.message
   }
 
-  return 'Unable to load bookmarks.'
+  return 'Không tải được dấu trang.'
 }
 
 export async function fetchMyBookmarks() {
@@ -17,6 +17,6 @@ export async function fetchMyBookmarks() {
     const response = await apiClient.get('/bookmarks')
     return Array.isArray(response.data?.bookmarks) ? response.data.bookmarks : []
   } catch (error) {
-    throw new Error(getErrorMessage(error))
+    throw new Error(getErrorMessage(error), { cause: error })
   }
 }

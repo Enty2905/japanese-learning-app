@@ -55,9 +55,9 @@ export function LessonsPage() {
           <p>{currentLevelMeta.description}</p>
 
           <div className="lessons-hero-meta">
-            <span>{currentLessons.length} Lessons</span>
+            <span>{currentLessons.length} bài học</span>
             <span>•</span>
-            <span>{completionRate}% Complete</span>
+            <span>Hoàn thành {completionRate}%</span>
           </div>
 
           <div className="lessons-hero-progress-track" aria-hidden="true">
@@ -68,7 +68,7 @@ export function LessonsPage() {
           </div>
         </section>
 
-        <section className="lessons-level-tabs" aria-label="Lesson levels">
+        <section className="lessons-level-tabs" aria-label="Cấp độ bài học">
           {lessonLevels.map((itemLevel) => (
             <Link
               key={itemLevel}
@@ -80,9 +80,9 @@ export function LessonsPage() {
           ))}
         </section>
 
-        <section className="lessons-grid" aria-label="Lessons list">
+        <section className="lessons-grid" aria-label="Danh sách bài học">
           {isLoading ? (
-            <p className="lessons-feedback">Loading lessons from database...</p>
+            <p className="lessons-feedback">Đang tải bài học từ cơ sở dữ liệu...</p>
           ) : null}
 
           {!isLoading && errorMessage ? (
@@ -90,7 +90,7 @@ export function LessonsPage() {
           ) : null}
 
           {!isLoading && !errorMessage && currentLessons.length === 0 ? (
-            <p className="lessons-feedback">No lessons found for this level.</p>
+            <p className="lessons-feedback">Chưa có bài học cho cấp độ này.</p>
           ) : null}
 
           {!isLoading && !errorMessage
@@ -117,18 +117,18 @@ export function LessonsPage() {
                         <p>{lesson.description}</p>
                       </div>
                       <span className="lesson-status-badge" aria-hidden="true">
-                        {isLocked ? 'LOCK' : isCompleted ? 'DONE' : ''}
+                        {isLocked ? 'KHÓA' : isCompleted ? 'XONG' : ''}
                       </span>
                     </header>
 
                     <div className="lesson-card-meta">
-                      <span>{lesson.estimatedTime} min</span>
+                      <span>{lesson.estimatedTime} phút</span>
                       <span>•</span>
-                      <span>{lesson.vocabularyCount || 0} words</span>
+                      <span>{lesson.vocabularyCount || 0} từ</span>
                     </div>
 
                     {isLocked ? (
-                      <p className="lesson-lock-note">Complete previous lesson to unlock.</p>
+                      <p className="lesson-lock-note">Hoàn thành bài trước để mở khóa.</p>
                     ) : null}
                   </Link>
                 )

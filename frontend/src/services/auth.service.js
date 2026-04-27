@@ -9,7 +9,7 @@ function getErrorMessage(error) {
     return error.message
   }
 
-  return 'An unexpected error occurred.'
+  return 'Đã xảy ra lỗi ngoài ý muốn.'
 }
 
 export async function register(payload) {
@@ -17,7 +17,7 @@ export async function register(payload) {
     const response = await apiClient.post('/auth/register', payload)
     return response.data
   } catch (error) {
-    throw new Error(getErrorMessage(error))
+    throw new Error(getErrorMessage(error), { cause: error })
   }
 }
 
@@ -26,6 +26,6 @@ export async function login(payload) {
     const response = await apiClient.post('/auth/login', payload)
     return response.data
   } catch (error) {
-    throw new Error(getErrorMessage(error))
+    throw new Error(getErrorMessage(error), { cause: error })
   }
 }

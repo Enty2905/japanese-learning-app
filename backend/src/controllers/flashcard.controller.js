@@ -34,7 +34,7 @@ async function createFlashcardSetController(req, res, next) {
     const flashcardSet = await addMyFlashcardSet(req.authUser.id, req.body);
 
     res.status(201).json({
-      message: 'Flashcard set created.',
+      message: 'Đã tạo bộ flashcard.',
       set: flashcardSet,
     });
   } catch (error) {
@@ -47,7 +47,7 @@ async function deleteFlashcardSetController(req, res, next) {
     await removeMyFlashcardSet(req.authUser.id, req.params.setId);
 
     res.status(200).json({
-      message: 'Flashcard set deleted.',
+      message: 'Đã xóa bộ flashcard.',
     });
   } catch (error) {
     next(error);

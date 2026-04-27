@@ -1,6 +1,6 @@
 export function DashboardStatsGrid({ statCards }) {
   return (
-    <section className="stats-grid" aria-label="Study statistics">
+    <section className="stats-grid" aria-label="Thống kê học tập">
       {statCards.map((item) => (
         <article key={item.key} className="stat-card">
           <div className="stat-card-top">

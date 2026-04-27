@@ -9,7 +9,7 @@ function getErrorMessage(error) {
     return error.message
   }
 
-  return 'Unable to load profile data.'
+  return 'Không tải được dữ liệu hồ sơ.'
 }
 
 export async function fetchMyProfile() {
@@ -17,6 +17,6 @@ export async function fetchMyProfile() {
     const response = await apiClient.get('/profile/me')
     return response.data?.profile || null
   } catch (error) {
-    throw new Error(getErrorMessage(error))
+    throw new Error(getErrorMessage(error), { cause: error })
   }
 }

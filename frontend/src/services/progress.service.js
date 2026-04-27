@@ -9,7 +9,7 @@ function getErrorMessage(error) {
     return error.message
   }
 
-  return 'Unable to load progress.'
+  return 'Không tải được tiến độ.'
 }
 
 export async function fetchProgressOverview() {
@@ -17,6 +17,6 @@ export async function fetchProgressOverview() {
     const response = await apiClient.get('/progress/overview')
     return response.data?.overview || null
   } catch (error) {
-    throw new Error(getErrorMessage(error))
+    throw new Error(getErrorMessage(error), { cause: error })
   }
 }

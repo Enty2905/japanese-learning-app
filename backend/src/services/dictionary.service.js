@@ -20,7 +20,7 @@ function normalizeSearchType(typeInput) {
   const type = typeof typeInput === 'string' ? typeInput.trim().toLowerCase() : 'vocabulary';
 
   if (!SUPPORTED_TYPES.has(type)) {
-    throw createHttpError(400, 'Search type must be vocabulary or kanji.');
+    throw createHttpError(400, 'Loại tra cứu phải là từ vựng hoặc kanji.');
   }
 
   return type;
@@ -34,7 +34,7 @@ function normalizeSearchQuery(queryInput) {
   }
 
   if (query.length > MAX_QUERY_LENGTH) {
-    throw createHttpError(400, 'Search query is too long.');
+    throw createHttpError(400, 'Từ khóa tra cứu quá dài.');
   }
 
   return query;

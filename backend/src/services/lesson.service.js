@@ -8,12 +8,12 @@ const SUPPORTED_LEVELS = new Set(['n1', 'n2', 'n3', 'n4', 'n5']);
 
 function normalizeLevel(level) {
   if (typeof level !== 'string') {
-    throw createHttpError(400, 'Lesson level is required.');
+    throw createHttpError(400, 'Vui lòng chọn cấp độ bài học.');
   }
 
   const normalizedLevel = level.trim().toLowerCase();
   if (!SUPPORTED_LEVELS.has(normalizedLevel)) {
-    throw createHttpError(400, 'Unsupported lesson level.');
+    throw createHttpError(400, 'Cấp độ bài học không được hỗ trợ.');
   }
 
   return normalizedLevel;
@@ -23,7 +23,7 @@ function normalizeLessonNumber(lessonNumberInput) {
   const parsedLessonNumber = Number(lessonNumberInput);
 
   if (!Number.isInteger(parsedLessonNumber) || parsedLessonNumber <= 0) {
-    throw createHttpError(400, 'Lesson number must be a positive integer.');
+    throw createHttpError(400, 'Số bài học phải là số nguyên dương.');
   }
 
   return parsedLessonNumber;
@@ -34,7 +34,7 @@ function createLessonId(level, lessonNumber) {
 }
 
 function createLessonDescription(level, lessonNumber, vocabularyCount) {
-  return `Lesson ${lessonNumber} for ${level.toUpperCase()} with ${vocabularyCount} vocabulary words.`;
+  return `Bài ${lessonNumber} cấp độ ${level.toUpperCase()} với ${vocabularyCount} từ vựng.`;
 }
 
 function mapVocabularyRowToItem(row) {
@@ -57,7 +57,7 @@ function buildLessonSummary(level, row) {
   return {
     id: createLessonId(level, row.lessonNumber),
     lessonNumber: row.lessonNumber,
-    title: `Lesson ${row.lessonNumber}`,
+    title: `Bài ${row.lessonNumber}`,
     description: createLessonDescription(level, row.lessonNumber, row.vocabularyCount),
     estimatedTime,
     vocabularyCount: row.vocabularyCount,
@@ -73,7 +73,7 @@ function buildLessonContent(lessonNumber, vocabularyItems) {
     .map((item) => `- ${item.japanese} (${item.romaji})`)
     .join('\n');
 
-  return `# Lesson ${lessonNumber}\nPractice the vocabulary below and create your own example sentences.\n\n## Vocabulary\n${sampleWords}`;
+  return `# Bài ${lessonNumber}\nLuyện các từ vựng bên dưới và tự đặt câu ví dụ của riêng bạn.\n\n## Từ vựng\n${sampleWords}`;
 }
 
 async function getLessonsByLevel(levelInput) {
@@ -89,7 +89,7 @@ async function getLessonByLevelAndNumber(levelInput, lessonNumberInput) {
   const vocabularyRows = await findVocabularyByLesson(level.toUpperCase(), lessonNumber);
 
   if (vocabularyRows.length === 0) {
-    throw createHttpError(404, 'Lesson not found.');
+    throw createHttpError(404, 'Không tìm thấy bài học.');
   }
 
   const vocabulary = vocabularyRows.map(mapVocabularyRowToItem);
@@ -97,7 +97,7 @@ async function getLessonByLevelAndNumber(levelInput, lessonNumberInput) {
   return {
     id: createLessonId(level, lessonNumber),
     lessonNumber,
-    title: `Lesson ${lessonNumber}`,
+    title: `Bài ${lessonNumber}`,
     description: createLessonDescription(level, lessonNumber, vocabulary.length),
     estimatedTime: Math.max(12, Math.min(40, Math.round(vocabulary.length * 1.4))),
     vocabulary,

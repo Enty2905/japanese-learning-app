@@ -20,9 +20,9 @@ export function AuthPage({ mode = 'login' }) {
   const [errorMessage, setErrorMessage] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
 
-  let submitLabel = isLoginMode ? 'Login' : 'Create account'
+  let submitLabel = isLoginMode ? 'Đăng nhập' : 'Tạo tài khoản'
   if (isSubmitting) {
-    submitLabel = 'Processing...'
+    submitLabel = 'Đang xử lý...'
   }
 
   const handleInputChange = (event) => {
@@ -59,7 +59,7 @@ export function AuthPage({ mode = 'login' }) {
           })
 
       saveAuthSession(response)
-      setSuccessMessage(response.message || 'Authentication successful.')
+      setSuccessMessage(response.message || 'Xác thực thành công.')
 
       navigate('/', { replace: true })
     } catch (error) {
@@ -71,26 +71,26 @@ export function AuthPage({ mode = 'login' }) {
 
   return (
     <main className="auth-page">
-      <section className="auth-card" aria-label="Authentication">
+      <section className="auth-card" aria-label="Xác thực">
         <Link to="/" className="auth-back-link">
-          Back to Dashboard
+          Về trang chủ
         </Link>
 
-        <h1>{isLoginMode ? 'Login' : 'Create Account'}</h1>
+        <h1>{isLoginMode ? 'Đăng nhập' : 'Tạo tài khoản'}</h1>
         <p>
           {isLoginMode
-            ? 'Sign in to continue your Japanese learning journey.'
-            : 'Register to save your progress and build flash cards.'}
+            ? 'Đăng nhập để tiếp tục hành trình học tiếng Nhật.'
+            : 'Đăng ký để lưu tiến độ và tạo flashcard.'}
         </p>
 
-        <div className="auth-toggle-group" role="tablist" aria-label="Authentication mode">
+        <div className="auth-toggle-group" role="tablist" aria-label="Chế độ xác thực">
           <Link
             to="/auth"
             className={`auth-toggle ${isLoginMode ? 'active' : ''}`}
             role="tab"
             aria-selected={isLoginMode}
           >
-            Login
+            Đăng nhập
           </Link>
           <Link
             to="/auth/register"
@@ -98,14 +98,14 @@ export function AuthPage({ mode = 'login' }) {
             role="tab"
             aria-selected={!isLoginMode}
           >
-            Sign Up
+            Đăng ký
           </Link>
         </div>
 
         <form className="auth-form" onSubmit={handleSubmit}>
           {!isLoginMode ? (
             <label className="auth-field" htmlFor="name">
-              Full name
+              Họ và tên
               <input
                 id="name"
                 name="name"
@@ -132,7 +132,7 @@ export function AuthPage({ mode = 'login' }) {
           </label>
 
           <label className="auth-field" htmlFor="password">
-            Password
+            Mật khẩu
             <input
               id="password"
               name="password"

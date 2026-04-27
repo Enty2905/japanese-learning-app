@@ -15,14 +15,16 @@ export function useLessonDetail(level, lessonNumber) {
   useEffect(() => {
     let isMounted = true
 
-    setState({
-      lesson: null,
-      isLoading: true,
-      errorMessage: '',
-    })
+    async function loadLessonDetail() {
+      setState({
+        lesson: null,
+        isLoading: true,
+        errorMessage: '',
+      })
 
-    fetchLessonDetail(level, lessonNumber)
-      .then((lesson) => {
+      try {
+        const lesson = await fetchLessonDetail(level, lessonNumber)
+
         if (!isMounted) {
           return
         }
@@ -32,8 +34,7 @@ export function useLessonDetail(level, lessonNumber) {
           isLoading: false,
           errorMessage: '',
         })
-      })
-      .catch((error) => {
+      } catch (error) {
         if (!isMounted) {
           return
         }
@@ -43,7 +44,10 @@ export function useLessonDetail(level, lessonNumber) {
           isLoading: false,
           errorMessage: error.message,
         })
-      })
+      }
+    }
+
+    loadLessonDetail()
 
     return () => {
       isMounted = false

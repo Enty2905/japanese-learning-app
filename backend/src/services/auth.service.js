@@ -17,15 +17,15 @@ function validatePassword(password) {
 
 function validateRegisterPayload({ fullName, email, password }) {
   if (!fullName) {
-    throw createHttpError(400, 'Full name is required.');
+    throw createHttpError(400, 'Vui lòng nhập họ và tên.');
   }
 
   if (!email) {
-    throw createHttpError(400, 'Email is required.');
+    throw createHttpError(400, 'Vui lòng nhập email.');
   }
 
   if (!validatePassword(password)) {
-    throw createHttpError(400, 'Password must be at least 6 characters.');
+    throw createHttpError(400, 'Mật khẩu phải có ít nhất 6 ký tự.');
   }
 }
 
@@ -53,7 +53,7 @@ async function registerUser({ name, email, password }) {
 
   const existingUser = await findUserByEmail(normalizedEmail);
   if (existingUser) {
-    throw createHttpError(409, 'Email is already registered.');
+    throw createHttpError(409, 'Email này đã được đăng ký.');
   }
 
   const passwordHash = await hashPassword(password);
@@ -73,21 +73,21 @@ async function loginUser({ email, password }) {
   const normalizedEmail = normalizeEmail(email);
 
   if (!normalizedEmail) {
-    throw createHttpError(400, 'Email is required.');
+    throw createHttpError(400, 'Vui lòng nhập email.');
   }
 
   if (!password) {
-    throw createHttpError(400, 'Password is required.');
+    throw createHttpError(400, 'Vui lòng nhập mật khẩu.');
   }
 
   const user = await findUserByEmail(normalizedEmail);
   if (!user) {
-    throw createHttpError(401, 'Invalid email or password.');
+    throw createHttpError(401, 'Email hoặc mật khẩu không đúng.');
   }
 
   const isValidPassword = await verifyPassword(password, user.passwordHash);
   if (!isValidPassword) {
-    throw createHttpError(401, 'Invalid email or password.');
+    throw createHttpError(401, 'Email hoặc mật khẩu không đúng.');
   }
 
   return {

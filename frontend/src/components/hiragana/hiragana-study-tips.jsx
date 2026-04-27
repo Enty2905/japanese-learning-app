@@ -1,30 +1,30 @@
 const STUDY_TIPS = [
   {
-    title: 'Practice Writing',
+    title: 'Luyện viết',
     description:
-      'Write each character multiple times to memorize the proper stroke order and shape.',
+      'Viết mỗi chữ nhiều lần để ghi nhớ đúng thứ tự nét và hình dáng chữ.',
   },
   {
-    title: 'Create Flashcards',
+    title: 'Tạo flashcard',
     description:
-      'Make physical or digital flashcards to test your recall of characters and their readings.',
+      'Tạo flashcard giấy hoặc số để tự kiểm tra khả năng nhớ mặt chữ và cách đọc.',
   },
   {
-    title: 'Read Simple Words',
+    title: 'Đọc từ đơn giản',
     description:
-      'Once you learn a few characters, start reading simple Japanese words to reinforce your knowledge.',
+      'Khi đã học được vài chữ, hãy bắt đầu đọc các từ tiếng Nhật đơn giản để củng cố kiến thức.',
   },
   {
-    title: 'Daily Practice',
+    title: 'Luyện mỗi ngày',
     description:
-      'Consistent daily practice, even for just 10-15 minutes, is more effective than long, infrequent sessions.',
+      'Luyện đều mỗi ngày, chỉ 10-15 phút, hiệu quả hơn các buổi học dài nhưng thưa.',
   },
 ]
 
 export function HiraganaStudyTips() {
   return (
     <section className="hiragana-card hiragana-study-tips">
-      <h2 className="hiragana-card-title">Study Tips</h2>
+      <h2 className="hiragana-card-title">Mẹo học</h2>
       <div className="hiragana-study-tips-grid">
         {STUDY_TIPS.map((tip) => (
           <article key={tip.title} className="hiragana-tip-item">

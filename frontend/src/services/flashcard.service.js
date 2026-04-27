@@ -9,7 +9,7 @@ function getErrorMessage(error) {
     return error.message
   }
 
-  return 'Unable to load flashcards.'
+  return 'Không tải được flashcard.'
 }
 
 export async function fetchMyFlashcardSets() {

@@ -11,12 +11,20 @@ const BOOKMARK_ITEM_TYPE_MAP = {
   kanji: 'kanjiId',
   grammar: 'grammarPointId',
 };
+const FIELD_LABELS = {
+  itemId: 'Mã mục',
+  bookmarkId: 'Mã dấu trang',
+};
+
+function getFieldLabel(fieldName) {
+  return FIELD_LABELS[fieldName] || fieldName;
+}
 
 function parsePositiveInteger(value, fieldName) {
   const parsed = Number(value);
 
   if (!Number.isInteger(parsed) || parsed <= 0) {
-    throw createHttpError(400, `${fieldName} must be a positive integer.`);
+    throw createHttpError(400, `${getFieldLabel(fieldName)} phải là số nguyên dương.`);
   }
 
   return parsed;
@@ -27,7 +35,7 @@ function buildBookmarkReference(itemType, itemId) {
   const referenceKey = BOOKMARK_ITEM_TYPE_MAP[normalizedItemType];
 
   if (!referenceKey) {
-    throw createHttpError(400, 'itemType must be one of: lesson, vocabulary, kanji, grammar.');
+    throw createHttpError(400, 'itemType phải là một trong các giá trị: lesson, vocabulary, kanji, grammar.');
   }
 
   const parsedItemId = parsePositiveInteger(itemId, 'itemId');
@@ -92,7 +100,7 @@ async function removeBookmark(userId, bookmarkIdInput) {
   const deletedRow = await deleteBookmarkById(userId, bookmarkId);
 
   if (!deletedRow) {
-    throw createHttpError(404, 'Bookmark not found.');
+    throw createHttpError(404, 'Không tìm thấy dấu trang.');
   }
 }
 

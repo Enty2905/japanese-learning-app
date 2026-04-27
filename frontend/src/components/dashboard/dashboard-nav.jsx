@@ -5,15 +5,15 @@ export function DashboardNav({ navItems }) {
   return (
     <>
       <header className="top-nav">
-        <Link to="/" className="brand" aria-label="Learn Japanese Home">
+        <Link to="/" className="brand" aria-label="Trang chủ Học tiếng Nhật">
           <div className="brand-logo">JP</div>
           <div className="brand-text">
-            <span>Learn</span>
-            <span>Japanese</span>
+            <span>Japanese </span>
+            <span>Learning</span>
           </div>
         </Link>
 
-        <nav className="nav-links" aria-label="Main navigation">
+        <nav className="nav-links" aria-label="Điều hướng chính">
           {navItems.map((item) => (
             <NavLink
               key={item.label}
@@ -29,7 +29,7 @@ export function DashboardNav({ navItems }) {
         <AuthFab />
       </header>
 
-      <Link to="/assistant" className="assistant-robot-fab" aria-label="Open AI assistant">
+      <Link to="/assistant" className="assistant-robot-fab" aria-label="Mở chat với AI">
         <svg
           viewBox="0 0 24 24"
           fill="none"

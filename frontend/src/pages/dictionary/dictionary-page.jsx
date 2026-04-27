@@ -219,7 +219,7 @@ function EmptyDictionaryState({
       <section className="dictionary-panel dictionary-tips-panel">
         <div className="dictionary-panel-head">
           <SparkIcon className="dictionary-section-icon" />
-          <h2>Tips</h2>
+          <h2>Mẹo</h2>
         </div>
 
         <ul className="dictionary-tip-list">

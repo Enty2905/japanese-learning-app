@@ -34,6 +34,16 @@ function formatErrorMessage(errors) {
   return errors.join(' | ')
 }
 
+function getRoleLabel(role) {
+  const roleLabels = {
+    admin: 'Quản trị viên',
+    student: 'Học viên',
+    teacher: 'Giáo viên',
+  }
+
+  return roleLabels[role] || role || 'Học viên'
+}
+
 export function ProfilePage() {
   const navigate = useNavigate()
   const { isAuthenticated, user } = useAuthSession()
@@ -50,15 +60,17 @@ export function ProfilePage() {
 
     let isMounted = true
 
-    setIsLoading(true)
-    setErrorMessage('')
+    async function loadProfileData() {
+      setIsLoading(true)
+      setErrorMessage('')
 
-    Promise.allSettled([
-      fetchMyProfile(),
-      fetchProgressOverview(),
-      fetchMyBookmarks(),
-    ])
-      .then((results) => {
+      try {
+        const results = await Promise.allSettled([
+          fetchMyProfile(),
+          fetchProgressOverview(),
+          fetchMyBookmarks(),
+        ])
+
         if (!isMounted) {
           return
         }
@@ -69,30 +81,32 @@ export function ProfilePage() {
         if (profileResult.status === 'fulfilled') {
           setProfile(profileResult.value)
         } else {
-          nextErrors.push(profileResult.reason?.message || 'Failed to load profile.')
+          nextErrors.push(profileResult.reason?.message || 'Không tải được hồ sơ.')
         }
 
         const progressResult = results[1]
         if (progressResult.status === 'fulfilled') {
           setProgressOverview(progressResult.value)
         } else {
-          nextErrors.push(progressResult.reason?.message || 'Failed to load progress.')
+          nextErrors.push(progressResult.reason?.message || 'Không tải được tiến độ.')
         }
 
         const bookmarkResult = results[2]
         if (bookmarkResult.status === 'fulfilled') {
           setBookmarkCount(bookmarkResult.value.length)
         } else {
-          nextErrors.push(bookmarkResult.reason?.message || 'Failed to load bookmarks.')
+          nextErrors.push(bookmarkResult.reason?.message || 'Không tải được dấu trang.')
         }
 
         setErrorMessage(formatErrorMessage(nextErrors))
-      })
-      .finally(() => {
+      } finally {
         if (isMounted) {
           setIsLoading(false)
         }
-      })
+      }
+    }
+
+    loadProfileData()
 
     return () => {
       isMounted = false
@@ -120,45 +134,45 @@ export function ProfilePage() {
             <div className="profile-avatar">{buildAvatarLabel(displayUser)}</div>
 
             <div className="profile-identity">
-              <h1>{displayUser?.fullName || displayUser?.displayName || 'User Profile'}</h1>
+              <h1>{displayUser?.fullName || displayUser?.displayName || 'Hồ sơ người dùng'}</h1>
               <p>{displayUser?.email || ''}</p>
             </div>
           </header>
 
           <div className="profile-actions">
             <button type="button" onClick={handleLogout} className="profile-logout-btn">
-              Log out
+              Đăng xuất
             </button>
             <Link to="/" className="profile-back-link">
-              Back to Dashboard
+              Về trang chủ
             </Link>
           </div>
 
-          {isLoading ? <p className="profile-feedback">Loading protected profile APIs...</p> : null}
+          {isLoading ? <p className="profile-feedback">Đang tải dữ liệu hồ sơ...</p> : null}
 
           {!isLoading && errorMessage ? (
             <p className="profile-feedback profile-feedback--error">{errorMessage}</p>
           ) : null}
         </section>
 
-        <section className="profile-stats-grid" aria-label="User account data">
+        <section className="profile-stats-grid" aria-label="Dữ liệu tài khoản người dùng">
           <article className="profile-stat-card">
-            <p className="profile-stat-label">Role</p>
-            <h2 className="profile-stat-value">{displayUser?.role || 'student'}</h2>
+            <p className="profile-stat-label">Vai trò</p>
+            <h2 className="profile-stat-value">{getRoleLabel(displayUser?.role)}</h2>
           </article>
 
           <article className="profile-stat-card">
-            <p className="profile-stat-label">Lesson Completed</p>
+            <p className="profile-stat-label">Bài học đã hoàn thành</p>
             <h2 className="profile-stat-value">{progressOverview?.lessons?.completed || 0}</h2>
           </article>
 
           <article className="profile-stat-card">
-            <p className="profile-stat-label">Tracked Vocabulary</p>
+            <p className="profile-stat-label">Từ vựng đang theo dõi</p>
             <h2 className="profile-stat-value">{progressOverview?.vocabulary?.tracked || 0}</h2>
           </article>
 
           <article className="profile-stat-card">
-            <p className="profile-stat-label">Bookmarks</p>
+            <p className="profile-stat-label">Dấu trang</p>
             <h2 className="profile-stat-value">{bookmarkCount}</h2>
           </article>
         </section>

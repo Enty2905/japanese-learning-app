@@ -12,7 +12,7 @@ export function KatakanaCharacterDetail({
       <aside className="katakana-card katakana-detail-card">
         <div className="katakana-detail-empty">
           <LanguagesIcon className="katakana-detail-empty-icon" />
-          <p>Select a character to see details</p>
+          <p>Chọn một chữ để xem chi tiết</p>
         </div>
       </aside>
     )
@@ -37,7 +37,7 @@ export function KatakanaCharacterDetail({
             onClick={onPlaySound}
           >
             <VolumeIcon className="katakana-action-icon" />
-            Play Sound
+            Nghe phát âm
           </button>
 
           <button
@@ -48,20 +48,20 @@ export function KatakanaCharacterDetail({
             onClick={() => onToggleMastered(selectedCharacter.character)}
           >
             <CheckIcon className="katakana-action-icon" />
-            {isMastered ? 'Mastered' : 'Mark as Mastered'}
+            {isMastered ? 'Đã thuộc' : 'Đánh dấu đã thuộc'}
           </button>
         </div>
 
         <section className="katakana-detail-section">
-          <h3>Common Usage</h3>
+          <h3>Cách dùng phổ biến</h3>
           <p>
-            Katakana is primarily used for foreign loanwords, onomatopoeia, and
-            emphasis similar to italics in English.
+            Katakana chủ yếu dùng cho từ mượn nước ngoài, từ tượng thanh và
+            nhấn mạnh tương tự chữ nghiêng trong tiếng Anh.
           </p>
         </section>
 
         <section className="katakana-detail-section">
-          <h3>Example Words</h3>
+          <h3>Từ ví dụ</h3>
           <p>
             {exampleWords.length > 0
               ? exampleWords.map((item, index) => (
@@ -70,7 +70,7 @@ export function KatakanaCharacterDetail({
                     {index < exampleWords.length - 1 ? <br /> : null}
                   </span>
                 ))
-              : 'No example words available for this character yet.'}
+              : 'Chưa có từ ví dụ cho chữ này.'}
           </p>
         </section>
       </div>

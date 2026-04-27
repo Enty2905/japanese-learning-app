@@ -1,6 +1,6 @@
 function notFoundHandler(req, res) {
   res.status(404).json({
-    message: 'Endpoint not found.',
+    message: 'Không tìm thấy endpoint.',
   });
 }
 
@@ -10,7 +10,7 @@ function errorHandler(error, req, res, next) {
   }
 
   const status = Number.isInteger(error.status) ? error.status : 500;
-  const message = status >= 500 ? 'Internal server error.' : error.message;
+  const message = status >= 500 ? 'Lỗi máy chủ nội bộ.' : error.message;
 
   return res.status(status).json({
     message,

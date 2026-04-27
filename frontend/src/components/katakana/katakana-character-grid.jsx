@@ -8,7 +8,7 @@ export function KatakanaCharacterGrid({
 }) {
   return (
     <section className="katakana-card">
-      <h2 className="katakana-card-title">Character Chart</h2>
+      <h2 className="katakana-card-title">Bảng chữ</h2>
       <div className="katakana-chart-grid">
         {characters.map((character) => {
           const isSelected = selectedCharacter?.character === character.character
@@ -27,7 +27,7 @@ export function KatakanaCharacterGrid({
               <span className="katakana-char-romaji">{character.romaji}</span>
 
               {isMastered ? (
-                <span className="katakana-char-check" aria-label="Mastered">
+                <span className="katakana-char-check" aria-label="Đã thuộc">
                   <CheckIcon className="katakana-char-check-icon" />
                 </span>
               ) : null}
