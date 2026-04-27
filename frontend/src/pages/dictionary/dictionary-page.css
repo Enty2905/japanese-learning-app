@@ -34,7 +34,7 @@
   border-radius: 12px;
   background: #ffffff;
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: 10px;
   padding: 0 10px 0 14px;
@@ -61,14 +61,6 @@
   color: #7b879a;
 }
 
-.dictionary-search-actions {
-  border-left: 1px solid #e4e9f2;
-  padding-left: 10px;
-  display: flex;
-  gap: 6px;
-}
-
-.dictionary-icon-btn,
 .dictionary-segment-btn {
   border: 1px solid #dfe5ee;
   border-radius: 8px;
@@ -80,13 +72,6 @@
   transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 }
 
-.dictionary-icon-btn {
-  width: 36px;
-  height: 36px;
-  font-weight: 700;
-}
-
-.dictionary-icon-btn:hover,
 .dictionary-segment-btn:hover {
   border-color: #b9cdf0;
   color: #0b63ce;
@@ -227,6 +212,12 @@
   background: #eef6ff;
 }
 
+.dictionary-empty-note {
+  margin: 0;
+  color: #64748b;
+  line-height: 1.45;
+}
+
 .dictionary-jlpt-row {
   margin-top: 12px;
   display: flex;
@@ -249,17 +240,20 @@
 .dictionary-jlpt-chip--n4 { background: #2456bf; }
 .dictionary-jlpt-chip--n5 { background: #059669; }
 
-.dictionary-feedback-panel {
+.dictionary-feedback-panel,
+.dictionary-memory-panel {
   max-height: 406px;
   overflow: auto;
 }
 
-.dictionary-feedback-item {
+.dictionary-feedback-item,
+.dictionary-memory-item {
   border-bottom: 1px solid #edf1f6;
   padding: 13px 0;
 }
 
-.dictionary-feedback-item:last-child {
+.dictionary-feedback-item:last-child,
+.dictionary-memory-item:last-child {
   border-bottom: 0;
 }
 
@@ -276,6 +270,38 @@
 .dictionary-feedback-item strong {
   color: #475569;
   font-size: 14px;
+}
+
+.dictionary-memory-item div {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.dictionary-memory-item span {
+  color: #0b73e7;
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.dictionary-memory-item strong {
+  color: #0f172a;
+  font-size: 14px;
+}
+
+.dictionary-memory-item p {
+  margin: 8px 0 0;
+  color: #334155;
+  line-height: 1.45;
+}
+
+.dictionary-memory-item small {
+  display: block;
+  margin-top: 8px;
+  border-left: 2px solid #93c5fd;
+  color: #475569;
+  line-height: 1.5;
+  padding-left: 10px;
 }
 
 .dictionary-entry-panel {
@@ -710,15 +736,8 @@
     padding: 10px 12px;
   }
 
-  .dictionary-search-actions,
   .dictionary-language-select {
     grid-column: 1 / -1;
-  }
-
-  .dictionary-search-actions {
-    border-left: 0;
-    border-top: 1px solid #e4e9f2;
-    padding: 10px 0 0;
   }
 
   .dictionary-language-select {

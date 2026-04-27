@@ -26,7 +26,26 @@ export async function searchDictionary({ query, type }) {
       query: response.data?.query || query,
       vocabulary: Array.isArray(response.data?.vocabulary) ? response.data.vocabulary : [],
       kanji: Array.isArray(response.data?.kanji) ? response.data.kanji : [],
+      history: Array.isArray(response.data?.history) ? response.data.history : [],
     }
+  } catch (error) {
+    throw new Error(getErrorMessage(error), { cause: error })
+  }
+}
+
+export async function fetchDictionaryHistory() {
+  try {
+    const response = await apiClient.get('/dictionary/history')
+    return Array.isArray(response.data?.history) ? response.data.history : []
+  } catch (error) {
+    throw new Error(getErrorMessage(error), { cause: error })
+  }
+}
+
+export async function fetchKanjiMemoryHints() {
+  try {
+    const response = await apiClient.get('/dictionary/kanji-memory-hints')
+    return Array.isArray(response.data?.hints) ? response.data.hints : []
   } catch (error) {
     throw new Error(getErrorMessage(error), { cause: error })
   }

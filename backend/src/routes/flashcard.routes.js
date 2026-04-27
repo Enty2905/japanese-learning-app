@@ -1,15 +1,17 @@
 const express = require('express');
 const {
-  createFlashcardsController,
-  deleteFlashcardController,
-  getMyFlashcardsController,
+  createFlashcardSetController,
+  deleteFlashcardSetController,
+  getMyFlashcardSetController,
+  getMyFlashcardSetsController,
 } = require('../controllers/flashcard.controller');
 
 const flashcardRouter = express.Router();
 
-flashcardRouter.get('/', getMyFlashcardsController);
-flashcardRouter.post('/', createFlashcardsController);
-flashcardRouter.delete('/:flashcardId', deleteFlashcardController);
+flashcardRouter.get('/', getMyFlashcardSetsController);
+flashcardRouter.post('/', createFlashcardSetController);
+flashcardRouter.get('/:setId', getMyFlashcardSetController);
+flashcardRouter.delete('/:setId', deleteFlashcardSetController);
 
 module.exports = {
   flashcardRouter,

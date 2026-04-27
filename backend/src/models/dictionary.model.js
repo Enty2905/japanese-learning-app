@@ -1,5 +1,25 @@
 const { pool } = require('../config/db');
 
+let ensureHistoryTablePromise = null;
+
+function ensureDictionarySearchHistoryTable() {
+  if (!ensureHistoryTablePromise) {
+    const query = `
+      CREATE TABLE IF NOT EXISTS dictionary_search_history (
+        id BIGSERIAL PRIMARY KEY,
+        user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        query_text VARCHAR(80) NOT NULL,
+        search_type VARCHAR(20) NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `;
+
+    ensureHistoryTablePromise = pool.query(query);
+  }
+
+  return ensureHistoryTablePromise;
+}
+
 async function findVocabularyMatches(queryText, limit) {
   const containsPattern = `%${queryText}%`;
   const startsPattern = `${queryText}%`;
@@ -164,10 +184,63 @@ async function findKanjiExamples(kanjiIds) {
   return rows;
 }
 
+async function findRandomKanjiMemoryHints(limit) {
+  const query = `
+    SELECT
+      id,
+      kanji,
+      onyomi,
+      kunyomi,
+      meaning_vi AS "meaningVi",
+      meaning_en AS "meaningEn",
+      jlpt_level AS "jlptLevel",
+      han_viet AS "hanViet",
+      mnemonic
+    FROM kanji
+    WHERE mnemonic IS NOT NULL
+      AND BTRIM(mnemonic) <> ''
+    ORDER BY RANDOM()
+    LIMIT $1
+  `;
+
+  const { rows } = await pool.query(query, [limit]);
+  return rows;
+}
+
+async function createDictionarySearchHistory({ userId, queryText, searchType }) {
+  await ensureDictionarySearchHistoryTable();
+
+  const query = `
+    INSERT INTO dictionary_search_history (user_id, query_text, search_type)
+    VALUES ($1, $2, $3)
+  `;
+
+  await pool.query(query, [userId, queryText, searchType]);
+}
+
+async function findDictionarySearchHistory(userId, limit) {
+  await ensureDictionarySearchHistoryTable();
+
+  const query = `
+    SELECT query_text AS "queryText", search_type AS "searchType", MAX(created_at) AS "createdAt"
+    FROM dictionary_search_history
+    WHERE user_id = $1
+    GROUP BY query_text, search_type
+    ORDER BY "createdAt" DESC
+    LIMIT $2
+  `;
+
+  const { rows } = await pool.query(query, [userId, limit]);
+  return rows;
+}
+
 module.exports = {
+  createDictionarySearchHistory,
+  findDictionarySearchHistory,
   findKanjiByCharacters,
   findKanjiExamples,
   findKanjiMatches,
+  findRandomKanjiMemoryHints,
   findVocabularyExamples,
   findVocabularyMatches,
 };

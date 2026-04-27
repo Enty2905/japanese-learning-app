@@ -1,7 +1,11 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Navigate, useSearchParams } from 'react-router-dom'
 import { DashboardNav } from '../../components/dashboard/dashboard-nav'
 import { useDictionarySearch } from '../../hooks/use-dictionary-search'
+import {
+  fetchDictionaryHistory,
+  fetchKanjiMemoryHints,
+} from '../../services/dictionary.service'
 import { NAV_ITEMS } from '../dashboard/dashboard-content'
 import '../dashboard/dashboard-page.css'
 import './dictionary-page.css'
@@ -9,14 +13,11 @@ import './dictionary-page.css'
 const SEARCH_TABS = [
   { id: 'vocabulary', label: 'Từ vựng' },
   { id: 'kanji', label: 'Hán tự' },
-  { id: 'sentence', label: 'Mẫu câu', disabled: true },
-  { id: 'grammar', label: 'Ngữ pháp', disabled: true },
-  { id: 'jp-jp', label: 'Nhật - Nhật', disabled: true },
 ]
 
-const HISTORY_KEYWORDS = ['評', '快', '決', '央', '呼', '演', '横', '文句', '彼女 かのじょ は疲つかれる']
 const HOT_KEYWORDS = ['以上', '役割', '値段', '間', '検討', '活躍', '技術', '影響', '頭', '人', 'さ']
 const JLPT_LEVELS = ['N1', 'N2', 'N3', 'N4', 'N5']
+const GUEST_HISTORY_KEY = 'dictionary-search-history'
 
 function SearchIcon(props) {
   return (
@@ -112,6 +113,60 @@ function getDisplayMeaning(item) {
   return item?.meaningVi || item?.meaningEn || 'Chưa có nghĩa.'
 }
 
+function readGuestHistory() {
+  if (typeof window === 'undefined') {
+    return []
+  }
+
+  try {
+    const parsedHistory = JSON.parse(window.localStorage.getItem(GUEST_HISTORY_KEY) || '[]')
+
+    if (!Array.isArray(parsedHistory)) {
+      return []
+    }
+
+    return parsedHistory.filter((item) => typeof item?.query === 'string' && item.query.trim())
+  } catch {
+    return []
+  }
+}
+
+function writeGuestHistory(query, type) {
+  if (typeof window === 'undefined' || !query) {
+    return []
+  }
+
+  const nextEntry = {
+    query,
+    type,
+  }
+  const nextHistory = [
+    nextEntry,
+    ...readGuestHistory().filter((item) => item.query !== query || item.type !== type),
+  ].slice(0, 12)
+
+  window.localStorage.setItem(GUEST_HISTORY_KEY, JSON.stringify(nextHistory))
+  return nextHistory
+}
+
+function normalizeHistoryEntries(historyEntries, fallbackType) {
+  return historyEntries
+    .map((item) => {
+      if (typeof item === 'string') {
+        return {
+          query: item,
+          type: fallbackType,
+        }
+      }
+
+      return {
+        query: item?.query || item?.queryText || '',
+        type: item?.type || item?.searchType || fallbackType,
+      }
+    })
+    .filter((item) => item.query)
+}
+
 function DictionarySearchBox({
   activeType,
   inputValue,
@@ -131,13 +186,6 @@ function DictionarySearchBox({
           aria-label="Nhập từ khóa tra cứu"
         />
 
-        <div className="dictionary-search-actions" aria-label="Công cụ tra cứu">
-          <button type="button" className="dictionary-icon-btn" aria-label="Tra bằng nét vẽ">⌁</button>
-          <button type="button" className="dictionary-icon-btn" aria-label="Tra bằng hán tự">ゑ</button>
-          <button type="button" className="dictionary-icon-btn" aria-label="Luyện phát âm">◉</button>
-          <button type="button" className="dictionary-icon-btn" aria-label="Sổ tay">▣</button>
-        </div>
-
         <select className="dictionary-language-select" aria-label="Chọn ngôn ngữ">
           <option>Nhật - Việt</option>
           <option>Việt - Nhật</option>
@@ -145,10 +193,6 @@ function DictionarySearchBox({
       </form>
 
       <div className="dictionary-tabs" role="tablist" aria-label="Loại tra cứu">
-        <button type="button" className="dictionary-tab" disabled>
-          Chế độ AI
-        </button>
-
         {SEARCH_TABS.map((tab) => (
           <button
             key={tab.id}
@@ -165,7 +209,11 @@ function DictionarySearchBox({
   )
 }
 
-function EmptyDictionaryState({ onKeywordSelect }) {
+function EmptyDictionaryState({
+  historyEntries,
+  memoryHints,
+  onKeywordSelect,
+}) {
   return (
     <div className="dictionary-content-grid">
       <section className="dictionary-panel dictionary-tips-panel">
@@ -180,7 +228,12 @@ function EmptyDictionaryState({ onKeywordSelect }) {
           <li>Tra cứu katakana: viết hoa chữ đó, ví dụ: BETONAMU.</li>
         </ul>
 
-        <KeywordSection title="Lịch sử" keywords={HISTORY_KEYWORDS} onKeywordSelect={onKeywordSelect} />
+        <KeywordSection
+          title="Lịch sử"
+          keywords={historyEntries}
+          emptyText="Chưa có lịch sử tra cứu."
+          onKeywordSelect={onKeywordSelect}
+        />
         <KeywordSection title="Từ khoá hot" keywords={HOT_KEYWORDS} onKeywordSelect={onKeywordSelect} />
 
         <section className="dictionary-keyword-section">
@@ -196,27 +249,36 @@ function EmptyDictionaryState({ onKeywordSelect }) {
       </section>
 
       <aside className="dictionary-side-column">
-        <section className="dictionary-panel dictionary-feedback-panel">
-          <h2>Góp ý</h2>
-          {[
-            ['名乗る', 'Người dân ông tự xưng là cảnh sát...', 'Xuan Quang Dinh'],
-            ['熱中する', 'Sử dụng ma tuý', 'Ntờ'],
-            ['体裁', 'giữ thể diện', 'Dinh Lâm'],
-          ].map((item) => (
-            <article key={item[0]} className="dictionary-feedback-item">
-              <p>
-                <span>{item[0]}</span> : {item[1]}
-              </p>
-              <strong>{item[2]}</strong>
-            </article>
-          ))}
+        <section className="dictionary-panel dictionary-memory-panel">
+          <h2>Gợi ý cách nhớ Kanji</h2>
+          {memoryHints.length > 0 ? (
+            memoryHints.map((item) => (
+              <article key={item.id || item.kanji} className="dictionary-memory-item">
+                <div>
+                  <span>{item.kanji}</span>
+                  <strong>{item.hanViet || item.onyomi || item.kunyomi}</strong>
+                </div>
+                <p>{getDisplayMeaning(item)}</p>
+                <small>{item.mnemonic}</small>
+              </article>
+            ))
+          ) : (
+            <p className="dictionary-empty-note">Chưa có gợi ý cách nhớ từ cơ sở dữ liệu.</p>
+          )}
         </section>
       </aside>
     </div>
   )
 }
 
-function KeywordSection({ title, keywords, onKeywordSelect }) {
+function KeywordSection({
+  title,
+  keywords,
+  emptyText = '',
+  onKeywordSelect,
+}) {
+  const normalizedKeywords = normalizeHistoryEntries(keywords, 'vocabulary')
+
   return (
     <section className="dictionary-keyword-section">
       <div className="dictionary-keyword-head">
@@ -225,16 +287,19 @@ function KeywordSection({ title, keywords, onKeywordSelect }) {
       </div>
 
       <div className="dictionary-chip-list">
-        {keywords.map((keyword) => (
+        {normalizedKeywords.map((keyword) => (
           <button
-            key={`${title}-${keyword}`}
+            key={`${title}-${keyword.type}-${keyword.query}`}
             type="button"
             className="dictionary-chip"
             onClick={() => onKeywordSelect(keyword)}
           >
-            {keyword}
+            {keyword.query}
           </button>
         ))}
+        {normalizedKeywords.length === 0 && emptyText ? (
+          <p className="dictionary-empty-note">{emptyText}</p>
+        ) : null}
       </div>
     </section>
   )
@@ -325,7 +390,7 @@ function VocabularyResult({ vocabulary, relatedKanji, query }) {
 
       <aside className="dictionary-side-column">
         <section className="dictionary-panel dictionary-lookup-panel">
-          <h2>Kết quả tra cứu {query}</h2>
+          <h2>Các từ vựng liên quan tới {query}</h2>
           {vocabulary.slice(0, 6).map((item) => (
             <article key={item.id} className="dictionary-lookup-item">
               <span>{item.word}</span>
@@ -400,7 +465,6 @@ function KanjiResult({ kanji, query }) {
         <section className="dictionary-kanji-breakdown">
           <h2>Bộ</h2>
           <p>{primaryKanji.radical || 'Chưa có dữ liệu bộ thủ.'}</p>
-          {primaryKanji.unicodeCode ? <p>Unicode: {primaryKanji.unicodeCode}</p> : null}
         </section>
 
         <section className="dictionary-kanji-meaning">
@@ -515,9 +579,61 @@ export function DictionaryPage({ redirectToDictionary = false }) {
   const typeParam = searchParams.get('type') || 'vocabulary'
   const activeType = typeParam === 'kanji' ? 'kanji' : 'vocabulary'
   const [inputValue, setInputValue] = useState(queryParam)
+  const [guestHistory, setGuestHistory] = useState(readGuestHistory)
+  const [accountHistory, setAccountHistory] = useState([])
+  const [memoryHints, setMemoryHints] = useState([])
   const { result, isLoading, errorMessage } = useDictionarySearch(queryParam, activeType)
 
+  useEffect(() => {
+    let isMounted = true
+
+    async function loadMemoryHints() {
+      try {
+        const hints = await fetchKanjiMemoryHints()
+
+        if (isMounted) {
+          setMemoryHints(hints)
+        }
+      } catch {
+        if (isMounted) {
+          setMemoryHints([])
+        }
+      }
+    }
+
+    loadMemoryHints()
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
+  useEffect(() => {
+    let isMounted = true
+
+    async function loadSearchHistory() {
+      try {
+        const history = await fetchDictionaryHistory()
+
+        if (isMounted) {
+          setAccountHistory(history)
+        }
+      } catch {
+        if (isMounted) {
+          setAccountHistory([])
+        }
+      }
+    }
+
+    loadSearchHistory()
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
   const hasQuery = queryParam.trim().length > 0
+  const historyEntries = accountHistory.length > 0 ? accountHistory : guestHistory
   const totalResults = useMemo(
     () => result.vocabulary.length + result.kanji.length,
     [result.vocabulary.length, result.kanji.length],
@@ -531,6 +647,10 @@ export function DictionaryPage({ redirectToDictionary = false }) {
     event.preventDefault()
     const normalizedInput = inputValue.trim()
 
+    if (normalizedInput) {
+      setGuestHistory(writeGuestHistory(normalizedInput, activeType))
+    }
+
     setSearchParams(normalizedInput ? { q: normalizedInput, type: activeType } : { type: activeType })
   }
 
@@ -539,8 +659,12 @@ export function DictionaryPage({ redirectToDictionary = false }) {
   }
 
   const handleKeywordSelect = (keyword) => {
-    setInputValue(keyword)
-    setSearchParams({ q: keyword, type: activeType })
+    const nextQuery = typeof keyword === 'string' ? keyword : keyword.query
+    const nextType = typeof keyword === 'string' ? activeType : keyword.type
+
+    setInputValue(nextQuery)
+    setGuestHistory(writeGuestHistory(nextQuery, nextType))
+    setSearchParams({ q: nextQuery, type: nextType })
   }
 
   return (
@@ -557,7 +681,11 @@ export function DictionaryPage({ redirectToDictionary = false }) {
         />
 
         {!hasQuery ? (
-          <EmptyDictionaryState onKeywordSelect={handleKeywordSelect} />
+          <EmptyDictionaryState
+            historyEntries={historyEntries}
+            memoryHints={memoryHints}
+            onKeywordSelect={handleKeywordSelect}
+          />
         ) : (
           <>
             {isLoading ? <p className="dictionary-status">Đang tra cứu dữ liệu...</p> : null}

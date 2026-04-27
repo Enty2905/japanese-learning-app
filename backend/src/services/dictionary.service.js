@@ -1,13 +1,18 @@
 const {
+  createDictionarySearchHistory,
+  findDictionarySearchHistory,
   findKanjiByCharacters,
   findKanjiExamples,
   findKanjiMatches,
+  findRandomKanjiMemoryHints,
   findVocabularyExamples,
   findVocabularyMatches,
 } = require('../models/dictionary.model');
 const { createHttpError } = require('../utils/http-error');
 
 const DEFAULT_LIMIT = 8;
+const HISTORY_LIMIT = 12;
+const MEMORY_HINT_LIMIT = 3;
 const MAX_QUERY_LENGTH = 80;
 const SUPPORTED_TYPES = new Set(['vocabulary', 'kanji']);
 
@@ -92,12 +97,35 @@ function mapKanji(row, examplesByKanjiId = new Map()) {
   };
 }
 
+function mapSearchHistory(row) {
+  return {
+    query: row.queryText,
+    type: row.searchType,
+    createdAt: row.createdAt,
+  };
+}
+
+function mapKanjiMemoryHint(row) {
+  return {
+    id: row.id,
+    kanji: row.kanji,
+    onyomi: row.onyomi || '',
+    kunyomi: row.kunyomi || '',
+    meaningVi: row.meaningVi || '',
+    meaningEn: row.meaningEn || '',
+    jlptLevel: row.jlptLevel || '',
+    hanViet: row.hanViet || '',
+    mnemonic: row.mnemonic || '',
+  };
+}
+
 async function searchVocabulary(query) {
   const vocabularyRows = await findVocabularyMatches(query, DEFAULT_LIMIT);
   const vocabularyIds = vocabularyRows.map((row) => row.id);
   const exampleRows = await findVocabularyExamples(vocabularyIds);
   const examplesByVocabularyId = groupRowsById(exampleRows, 'vocabularyId');
-  const kanjiCharacters = vocabularyRows.flatMap((row) => extractKanjiCharacters(row.word));
+  const primaryVocabularyWord = vocabularyRows[0]?.word || '';
+  const kanjiCharacters = extractKanjiCharacters(primaryVocabularyWord);
   const uniqueKanjiCharacters = [...new Set(kanjiCharacters)];
   const relatedKanjiRows = await findKanjiByCharacters(uniqueKanjiCharacters);
 
@@ -119,7 +147,21 @@ async function searchKanji(query) {
   };
 }
 
-async function searchDictionary(typeInput, queryInput) {
+async function getDictionarySearchHistory(userId) {
+  if (!userId) {
+    return [];
+  }
+
+  const rows = await findDictionarySearchHistory(userId, HISTORY_LIMIT);
+  return rows.map(mapSearchHistory);
+}
+
+async function getRandomKanjiMemoryHints() {
+  const rows = await findRandomKanjiMemoryHints(MEMORY_HINT_LIMIT);
+  return rows.map(mapKanjiMemoryHint);
+}
+
+async function searchDictionary(typeInput, queryInput, userId = null) {
   const type = normalizeSearchType(typeInput);
   const query = normalizeSearchQuery(queryInput);
 
@@ -129,6 +171,7 @@ async function searchDictionary(typeInput, queryInput) {
       query,
       vocabulary: [],
       kanji: [],
+      history: await getDictionarySearchHistory(userId),
     };
   }
 
@@ -136,13 +179,26 @@ async function searchDictionary(typeInput, queryInput) {
     ? await searchKanji(query)
     : await searchVocabulary(query);
 
+  if (userId) {
+    await createDictionarySearchHistory({
+      userId,
+      queryText: query,
+      searchType: type,
+    });
+  }
+
+  const history = await getDictionarySearchHistory(userId);
+
   return {
     type,
     query,
+    history,
     ...result,
   };
 }
 
 module.exports = {
+  getDictionarySearchHistory,
+  getRandomKanjiMemoryHints,
   searchDictionary,
 };

@@ -1,40 +1,53 @@
 const {
-  addMyFlashcards,
-  getMyFlashcards,
-  removeMyFlashcard,
+  addMyFlashcardSet,
+  getMyFlashcardSet,
+  getMyFlashcardSets,
+  removeMyFlashcardSet,
 } = require('../services/flashcard.service');
 
-async function getMyFlashcardsController(req, res, next) {
+async function getMyFlashcardSetsController(req, res, next) {
   try {
-    const flashcards = await getMyFlashcards(req.authUser.id);
+    const sets = await getMyFlashcardSets(req.authUser.id);
 
     res.status(200).json({
-      flashcards,
+      sets,
     });
   } catch (error) {
     next(error);
   }
 }
 
-async function createFlashcardsController(req, res, next) {
+async function getMyFlashcardSetController(req, res, next) {
   try {
-    const flashcards = await addMyFlashcards(req.authUser.id, req.body);
+    const flashcardSet = await getMyFlashcardSet(req.authUser.id, req.params.setId);
+
+    res.status(200).json({
+      set: flashcardSet,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function createFlashcardSetController(req, res, next) {
+  try {
+    const flashcardSet = await addMyFlashcardSet(req.authUser.id, req.body);
 
     res.status(201).json({
-      message: 'Flashcards created.',
-      flashcards,
+      message: 'Flashcard set created.',
+      set: flashcardSet,
     });
   } catch (error) {
     next(error);
   }
 }
 
-async function deleteFlashcardController(req, res, next) {
+async function deleteFlashcardSetController(req, res, next) {
   try {
-    await removeMyFlashcard(req.authUser.id, req.params.flashcardId);
+    await removeMyFlashcardSet(req.authUser.id, req.params.setId);
 
     res.status(200).json({
-      message: 'Flashcard deleted.',
+      message: 'Flashcard set deleted.',
     });
   } catch (error) {
     next(error);
@@ -42,7 +55,8 @@ async function deleteFlashcardController(req, res, next) {
 }
 
 module.exports = {
-  createFlashcardsController,
-  deleteFlashcardController,
-  getMyFlashcardsController,
+  createFlashcardSetController,
+  deleteFlashcardSetController,
+  getMyFlashcardSetController,
+  getMyFlashcardSetsController,
 };

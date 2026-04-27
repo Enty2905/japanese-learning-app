@@ -21,6 +21,7 @@ function App() {
       <Route path="/dictionary" element={<DictionaryPage />} />
       <Route path="/directory" element={<DictionaryPage redirectToDictionary />} />
       <Route path="/flashcards" element={<FlashcardsPage />} />
+      <Route path="/flashcards/:setId" element={<FlashcardsPage />} />
       <Route path="/auth" element={<AuthPage mode="login" />} />
       <Route path="/auth/register" element={<AuthPage mode="register" />} />
       <Route path="/profile" element={<ProfilePage />} />

@@ -5,7 +5,7 @@ Cập nhật: 25/04/2026
 
 Ghi chú:
 - File này tổng hợp cấu trúc CSDL hiện tại sau khi import dữ liệu tiếng Nhật.
-- Tổng danh sách hiện tại: 25 bảng.
+- Tổng danh sách hiện tại: 28 bảng.
 
 ============================================================
 NHÓM 1 — NGƯỜI DÙNG
@@ -494,6 +494,9 @@ TÓM TẮT DANH SÁCH BẢNG
 23. handwriting_predictions
 24. ai_writing_reviews
 25. learning_logs
+26. dictionary_search_history
+27. user_flashcard_sets
+28. user_flashcards
 
 
 ============================================================
@@ -551,3 +554,51 @@ UNION ALL
 SELECT 'kanji_examples', COUNT(*) FROM kanji_examples
 UNION ALL
 SELECT 'grammar_examples', COUNT(*) FROM grammar_examples;
+
+============================================================
+BO SUNG SAU CHUC NANG DICTIONARY
+============================================================
+
+26. BANG: dictionary_search_history
+Muc dich: Luu lich su tra cuu dictionary theo tung tai khoan.
+
+Cot:
+- id               BIGSERIAL      PRIMARY KEY
+- user_id          BIGINT         FOREIGN KEY -> users.id ON DELETE CASCADE
+- query_text       VARCHAR(80)    NOT NULL
+- search_type      VARCHAR(20)    NOT NULL
+                                  Gia tri hien tai: vocabulary / kanji
+- created_at       TIMESTAMPTZ    NOT NULL DEFAULT NOW()
+
+============================================================
+BO SUNG SAU CHUC NANG FLASHCARD
+============================================================
+
+27. BANG: user_flashcard_sets
+Muc dich: Luu tung bo flash card rieng theo tung tai khoan nguoi dung.
+
+Cot:
+- id               BIGSERIAL      PRIMARY KEY
+- user_id          BIGINT         FOREIGN KEY -> users.id ON DELETE CASCADE
+- title            VARCHAR(255)   NOT NULL
+                                  Ten bo the, vi du Bai 6 - Tu vung.
+- description      TEXT           NULL
+                                  Mo ta ngan cho bo the.
+- created_at       TIMESTAMPTZ    NOT NULL DEFAULT NOW()
+- updated_at       TIMESTAMPTZ    NOT NULL DEFAULT NOW()
+
+
+28. BANG: user_flashcards
+Muc dich: Luu tung card thuoc mot bo flash card cua nguoi dung.
+
+Cot:
+- id               BIGSERIAL      PRIMARY KEY
+- user_id          BIGINT         FOREIGN KEY -> users.id ON DELETE CASCADE
+- set_id           BIGINT         FOREIGN KEY -> user_flashcard_sets.id ON DELETE CASCADE
+                                  Bo the chua card nay.
+- front_text       VARCHAR(255)   NOT NULL
+                                  Mat truoc cua flash card, vi du tu tieng Nhat.
+- back_text        TEXT           NOT NULL
+                                  Mat sau cua flash card, vi du nghia tieng Viet.
+- created_at       TIMESTAMPTZ    NOT NULL DEFAULT NOW()
+- updated_at       TIMESTAMPTZ    NOT NULL DEFAULT NOW()
