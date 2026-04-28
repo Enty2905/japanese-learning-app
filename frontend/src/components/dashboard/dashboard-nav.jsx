@@ -1,4 +1,5 @@
-import { Link, NavLink } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import { ProtectedLink, ProtectedNavLink } from '../auth/protected-link'
 import { AuthFab } from './auth-fab'
 
 export function DashboardNav({ navItems }) {
@@ -15,21 +16,21 @@ export function DashboardNav({ navItems }) {
 
         <nav className="nav-links" aria-label="Điều hướng chính">
           {navItems.map((item) => (
-            <NavLink
+            <ProtectedNavLink
               key={item.label}
               to={item.path}
               end={item.path === '/'}
               className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
             >
               {item.label}
-            </NavLink>
+            </ProtectedNavLink>
           ))}
         </nav>
 
         <AuthFab />
       </header>
 
-      <Link to="/assistant" className="assistant-robot-fab" aria-label="Mở chat với AI">
+      <ProtectedLink to="/assistant" className="assistant-robot-fab" aria-label="Mở chat với AI">
         <svg
           viewBox="0 0 24 24"
           fill="none"
@@ -46,7 +47,7 @@ export function DashboardNav({ navItems }) {
           <path d="M15 13h.01" />
           <path d="M9.5 16h5" />
         </svg>
-      </Link>
+      </ProtectedLink>
     </>
   )
 }

@@ -94,6 +94,10 @@
   box-shadow: 0 18px 34px rgba(63, 102, 255, 0.4);
 }
 
+.assistant-robot-fab.is-auth-locked {
+  cursor: not-allowed;
+}
+
 .assistant-robot-icon {
   width: 29px;
   height: 29px;
@@ -168,6 +172,10 @@
 
 .nav-link:hover {
   background: #f2f4fc;
+}
+
+.nav-link.is-auth-locked {
+  cursor: not-allowed;
 }
 
 .nav-link.active {
@@ -287,6 +295,10 @@
 
 .hero-btn:hover {
   transform: translateY(-2px);
+}
+
+.hero-btn.is-auth-locked {
+  cursor: not-allowed;
 }
 
 .hero-btn-primary {
@@ -632,6 +644,10 @@
   transform: translateY(-3px);
   border-color: #d7dcf0;
   box-shadow: var(--shadow-hover);
+}
+
+.feature-card.is-auth-locked {
+  cursor: not-allowed;
 }
 
 .feature-icon {

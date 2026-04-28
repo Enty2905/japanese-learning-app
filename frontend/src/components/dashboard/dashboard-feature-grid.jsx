@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { ProtectedLink } from '../auth/protected-link'
 
 export function DashboardFeatureGrid({ features, groups }) {
   return (
@@ -20,13 +20,13 @@ export function DashboardFeatureGrid({ features, groups }) {
               {features
                 .filter((feature) => feature.category === group.key)
                 .map((feature) => (
-                  <Link key={feature.title} to={feature.path} className="feature-card">
+                  <ProtectedLink key={feature.title} to={feature.path} className="feature-card">
                     <div className={`feature-icon ${feature.tone}`}>{feature.icon}</div>
                     <div>
                       <h4>{feature.title}</h4>
                       <p>{feature.description}</p>
                     </div>
-                  </Link>
+                  </ProtectedLink>
                 ))}
             </div>
           </article>

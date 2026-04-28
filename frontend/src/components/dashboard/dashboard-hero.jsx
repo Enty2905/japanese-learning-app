@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { ProtectedLink } from '../auth/protected-link'
 
 export function DashboardHero({ highlights = [] }) {
   return (
@@ -12,12 +12,12 @@ export function DashboardHero({ highlights = [] }) {
         </p>
 
         <div className="hero-actions">
-          <Link to="/lessons/n5" className="hero-btn hero-btn-primary">
+          <ProtectedLink to="/lessons/n5" className="hero-btn hero-btn-primary">
             Bắt đầu học
-          </Link>
-          <Link to="/flashcards" className="hero-btn hero-btn-secondary">
+          </ProtectedLink>
+          <ProtectedLink to="/flashcards" className="hero-btn hero-btn-secondary">
             Ôn flashcard
-          </Link>
+          </ProtectedLink>
         </div>
       </div>
 
