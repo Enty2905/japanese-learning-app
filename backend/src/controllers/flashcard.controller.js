@@ -3,6 +3,7 @@ const {
   getMyFlashcardSet,
   getMyFlashcardSets,
   removeMyFlashcardSet,
+  saveMyFlashcardReview,
 } = require('../services/flashcard.service');
 
 async function getMyFlashcardSetsController(req, res, next) {
@@ -54,9 +55,23 @@ async function deleteFlashcardSetController(req, res, next) {
   }
 }
 
+async function saveFlashcardReviewController(req, res, next) {
+  try {
+    const review = await saveMyFlashcardReview(req.authUser.id, req.params.setId, req.body);
+
+    res.status(200).json({
+      message: 'Da luu ket qua on tap flashcard.',
+      review,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
 module.exports = {
   createFlashcardSetController,
   deleteFlashcardSetController,
   getMyFlashcardSetController,
   getMyFlashcardSetsController,
+  saveFlashcardReviewController,
 };

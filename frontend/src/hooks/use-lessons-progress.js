@@ -1,123 +1,117 @@
-import { useState } from 'react'
-import { normalizeLessonVocabulary } from '../utils/lesson-vocabulary'
+import { useEffect, useState } from 'react'
+import {
+  completeLesson,
+  fetchCompletedLessons,
+} from '../services/progress.service'
 
-const PROGRESS_STORAGE_KEY = 'japaneseProgress'
-
-function readProgress() {
-  if (typeof window === 'undefined') {
-    return {}
-  }
-
-  const savedProgress = window.localStorage.getItem(PROGRESS_STORAGE_KEY)
-  if (!savedProgress) {
-    return {}
-  }
-
-  try {
-    const parsedProgress = JSON.parse(savedProgress)
-    return typeof parsedProgress === 'object' && parsedProgress !== null
-      ? parsedProgress
-      : {}
-  } catch {
-    return {}
+function createInitialState() {
+  return {
+    completedLessons: new Set(),
+    isProgressLoading: true,
+    progressErrorMessage: '',
   }
 }
 
-function readCompletedLessons() {
-  const progress = readProgress()
-  const completedLessons = progress.completedLessons
+function parseLessonId(lessonId) {
+  const match = /^([a-z][0-9])-l([1-9][0-9]*)$/i.exec(lessonId || '')
 
-  return Array.isArray(completedLessons) ? new Set(completedLessons) : new Set()
-}
-
-function persistCompletedLessons(completedLessons) {
-  if (typeof window === 'undefined') {
-    return
+  if (!match) {
+    return null
   }
 
-  const progress = readProgress()
-
-  window.localStorage.setItem(
-    PROGRESS_STORAGE_KEY,
-    JSON.stringify({
-      ...progress,
-      completedLessons: Array.from(completedLessons),
-    }),
-  )
-}
-
-function persistProgress(completedLessons, unlockedWords) {
-  if (typeof window === 'undefined') {
-    return
+  return {
+    level: match[1].toLowerCase(),
+    lessonNumber: Number(match[2]),
   }
-
-  const progress = readProgress()
-  const existingUnlockedWords = Array.isArray(progress.unlockedWords)
-    ? progress.unlockedWords
-    : []
-  const mergedUnlockedWords = Array.from(
-    new Set([...existingUnlockedWords, ...unlockedWords]),
-  )
-
-  window.localStorage.setItem(
-    PROGRESS_STORAGE_KEY,
-    JSON.stringify({
-      ...progress,
-      completedLessons: Array.from(completedLessons),
-      unlockedWords: mergedUnlockedWords,
-    }),
-  )
 }
 
 function parseLessonPayload(lessonInput) {
   if (typeof lessonInput === 'string') {
-    return {
-      lessonId: lessonInput,
-      vocabulary: [],
-    }
+    return parseLessonId(lessonInput)
   }
 
   if (typeof lessonInput === 'object' && lessonInput !== null) {
-    return {
-      lessonId: lessonInput.id,
-      vocabulary: normalizeLessonVocabulary(lessonInput.vocabulary),
-    }
+    return parseLessonId(lessonInput.id)
   }
 
-  return {
-    lessonId: '',
-    vocabulary: [],
-  }
+  return null
 }
 
 export function useLessonsProgress() {
-  const [completedLessons, setCompletedLessons] = useState(readCompletedLessons)
+  const [state, setState] = useState(createInitialState)
 
-  const markLessonCompleted = (lessonInput) => {
-    const { lessonId, vocabulary } = parseLessonPayload(lessonInput)
+  useEffect(() => {
+    let isMounted = true
 
-    if (!lessonId) {
-      return
+    async function loadCompletedLessons() {
+      setState((previousState) => ({
+        ...previousState,
+        isProgressLoading: true,
+        progressErrorMessage: '',
+      }))
+
+      try {
+        const completedLessons = await fetchCompletedLessons()
+
+        if (!isMounted) {
+          return
+        }
+
+        setState({
+          completedLessons: new Set(completedLessons),
+          isProgressLoading: false,
+          progressErrorMessage: '',
+        })
+      } catch (error) {
+        if (!isMounted) {
+          return
+        }
+
+        setState({
+          completedLessons: new Set(),
+          isProgressLoading: false,
+          progressErrorMessage: error.message,
+        })
+      }
     }
 
-    const unlockedWords = vocabulary.map((word) => word.japanese)
+    loadCompletedLessons()
 
-    setCompletedLessons((previousState) => {
-      if (previousState.has(lessonId)) {
-        persistCompletedLessons(previousState)
-        return previousState
-      }
+    return () => {
+      isMounted = false
+    }
+  }, [])
 
-      const nextState = new Set(previousState)
-      nextState.add(lessonId)
-      persistProgress(nextState, unlockedWords)
+  const markLessonCompleted = async (lessonInput) => {
+    const lessonPayload = parseLessonPayload(lessonInput)
 
-      return nextState
-    })
+    if (!lessonPayload) {
+      return null
+    }
+
+    const progress = await completeLesson(lessonPayload)
+    const completedLessonId = progress?.lessonId
+
+    if (completedLessonId) {
+      setState((previousState) => {
+        const nextCompletedLessons = new Set(previousState.completedLessons)
+        nextCompletedLessons.add(completedLessonId)
+
+        return {
+          ...previousState,
+          completedLessons: nextCompletedLessons,
+          progressErrorMessage: '',
+        }
+      })
+    }
+
+    return progress
   }
 
   return {
-    completedLessons,
+    completedLessons: state.completedLessons,
+    isProgressLoading: state.isProgressLoading,
+    progressErrorMessage: state.progressErrorMessage,
     markLessonCompleted,
   }
 }

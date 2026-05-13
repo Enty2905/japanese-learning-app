@@ -46,3 +46,12 @@ export async function deleteMyFlashcardSet(setId) {
     throw new Error(getErrorMessage(error), { cause: error })
   }
 }
+
+export async function saveFlashcardReview(setId, results) {
+  try {
+    const response = await apiClient.post(`/flashcards/${setId}/review`, { results })
+    return response.data?.review || null
+  } catch (error) {
+    throw new Error(getErrorMessage(error), { cause: error })
+  }
+}

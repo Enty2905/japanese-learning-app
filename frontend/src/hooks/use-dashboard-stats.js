@@ -1,10 +1,23 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import {
+  fetchLearningActivity,
+  fetchProgressOverview,
+} from '../services/progress.service'
+import { useAuthSession } from './use-auth-session'
+
+const DEFAULT_ACTIVITY = Object.freeze({
+  completedThisWeek: 0,
+  activeDays: 0,
+  recentActivities: [],
+  levelProgress: [],
+})
 
 const DEFAULT_STATS = Object.freeze({
   lessonsCompleted: 0,
   wordsUnlocked: 0,
   flashcardsCreated: 0,
   studyStreak: 0,
+  learningActivity: DEFAULT_ACTIVITY,
 })
 
 function createDefaultStats() {
@@ -13,40 +26,79 @@ function createDefaultStats() {
     wordsUnlocked: DEFAULT_STATS.wordsUnlocked,
     flashcardsCreated: DEFAULT_STATS.flashcardsCreated,
     studyStreak: DEFAULT_STATS.studyStreak,
+    learningActivity: {
+      completedThisWeek: DEFAULT_ACTIVITY.completedThisWeek,
+      activeDays: DEFAULT_ACTIVITY.activeDays,
+      recentActivities: [],
+      levelProgress: [],
+    },
   }
 }
 
-function parseProgressStats(savedProgress) {
-  try {
-    const progress = JSON.parse(savedProgress)
-
-    return {
-      lessonsCompleted: progress.completedLessons?.length || 0,
-      wordsUnlocked: progress.unlockedWords?.length || 0,
-      flashcardsCreated:
-        progress.createdFlashcards?.length || progress.passedQuizzes?.length || 0,
-      studyStreak: progress.studyStreak || 0,
-    }
-  } catch {
-    return createDefaultStats()
+function normalizeLearningActivity(activity, overview) {
+  return {
+    completedThisWeek:
+      activity?.completedThisWeek ?? overview?.lessons?.completedThisWeek ?? 0,
+    activeDays: activity?.activeDays ?? overview?.activity?.activeDays ?? 0,
+    recentActivities: Array.isArray(activity?.recentActivities)
+      ? activity.recentActivities
+      : [],
+    levelProgress: Array.isArray(activity?.levelProgress)
+      ? activity.levelProgress
+      : Array.isArray(overview?.levelProgress)
+        ? overview.levelProgress
+        : [],
   }
 }
 
-function getStatsFromStorage() {
-  if (typeof window === 'undefined') {
-    return createDefaultStats()
-  }
+function mapProgressOverviewToStats(overview, activity) {
+  const learningActivity = normalizeLearningActivity(activity, overview)
 
-  const savedProgress = window.localStorage.getItem('japaneseProgress')
-  if (!savedProgress) {
-    return createDefaultStats()
+  return {
+    lessonsCompleted: overview?.lessons?.completed || 0,
+    wordsUnlocked: overview?.vocabulary?.tracked || 0,
+    flashcardsCreated: 0,
+    studyStreak: activity?.studyStreak ?? overview?.activity?.studyStreak ?? 0,
+    learningActivity,
   }
-
-  return parseProgressStats(savedProgress)
 }
 
 export function useDashboardStats() {
-  const [stats] = useState(getStatsFromStorage)
+  const { isAuthenticated } = useAuthSession()
+  const [stats, setStats] = useState(createDefaultStats)
 
-  return stats
+  useEffect(() => {
+    if (!isAuthenticated) {
+      return undefined
+    }
+
+    let isMounted = true
+
+    async function loadProgressStats() {
+      try {
+        const [overview, activity] = await Promise.all([
+          fetchProgressOverview(),
+          fetchLearningActivity(),
+        ])
+
+        if (!isMounted) {
+          return
+        }
+
+        setStats(mapProgressOverviewToStats(overview, activity))
+      } catch {
+        if (isMounted) {
+          setStats(createDefaultStats())
+        }
+      }
+    }
+
+    loadProgressStats()
+
+    return () => {
+      isMounted = false
+    }
+  }, [isAuthenticated])
+
+  return isAuthenticated ? stats : DEFAULT_STATS
 }

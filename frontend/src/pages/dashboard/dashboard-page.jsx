@@ -1,6 +1,7 @@
 import { DashboardFeatureGrid } from '../../components/dashboard/dashboard-feature-grid'
 import { DashboardGuide } from '../../components/dashboard/dashboard-guide'
 import { DashboardHero } from '../../components/dashboard/dashboard-hero'
+import { DashboardLearningActivity } from '../../components/dashboard/dashboard-learning-activity'
 import { DashboardNav } from '../../components/dashboard/dashboard-nav'
 import { DashboardStatsGrid } from '../../components/dashboard/dashboard-stats-grid'
 import { useDashboardStats } from '../../hooks/use-dashboard-stats'
@@ -30,6 +31,7 @@ export function DashboardPage() {
       <main className="dashboard-main">
         <DashboardHero highlights={HERO_HIGHLIGHTS} />
         <DashboardStatsGrid statCards={statCards} />
+        <DashboardLearningActivity activity={stats.learningActivity} />
         <section className="dashboard-overview" aria-labelledby="dashboard-overview-title">
           <div className="dashboard-section-heading">
             <span>Website này giúp bạn học gì</span>

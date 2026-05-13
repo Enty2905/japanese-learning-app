@@ -18,6 +18,7 @@ function ensureFlashcardTables() {
         id BIGSERIAL PRIMARY KEY,
         user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
         set_id BIGINT NULL REFERENCES user_flashcard_sets(id) ON DELETE CASCADE,
+        vocabulary_id BIGINT NULL REFERENCES vocabulary(id) ON DELETE SET NULL,
         front_text VARCHAR(255) NOT NULL,
         back_text TEXT NOT NULL,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -26,6 +27,9 @@ function ensureFlashcardTables() {
 
       ALTER TABLE user_flashcards
       ADD COLUMN IF NOT EXISTS set_id BIGINT NULL REFERENCES user_flashcard_sets(id) ON DELETE CASCADE;
+
+      ALTER TABLE user_flashcards
+      ADD COLUMN IF NOT EXISTS vocabulary_id BIGINT NULL REFERENCES vocabulary(id) ON DELETE SET NULL;
 
       WITH users_with_orphan_cards AS (
         SELECT DISTINCT user_id
@@ -57,6 +61,16 @@ function ensureFlashcardTables() {
 
       ALTER TABLE user_flashcards
       ALTER COLUMN set_id SET NOT NULL;
+
+      UPDATE user_flashcards flashcards
+      SET vocabulary_id = vocabulary.id
+      FROM vocabulary
+      WHERE flashcards.vocabulary_id IS NULL
+        AND (
+          LOWER(vocabulary.word) = LOWER(flashcards.front_text)
+          OR LOWER(COALESCE(vocabulary.kana, '')) = LOWER(flashcards.front_text)
+          OR LOWER(COALESCE(vocabulary.romaji, '')) = LOWER(flashcards.front_text)
+        );
     `;
 
     ensureFlashcardTablesPromise = pool.query(query);
@@ -114,24 +128,59 @@ async function listFlashcardsBySetId(userId, setId) {
 
   const query = `
     SELECT
-      id,
-      set_id AS "setId",
-      front_text AS "frontText",
-      back_text AS "backText",
-      created_at AS "createdAt",
-      updated_at AS "updatedAt"
-    FROM user_flashcards
-    WHERE user_id = $1
-      AND set_id = $2
-    ORDER BY id ASC
+      cards.id,
+      cards.set_id AS "setId",
+      cards.vocabulary_id AS "vocabularyId",
+      cards.front_text AS "frontText",
+      cards.back_text AS "backText",
+      cards.created_at AS "createdAt",
+      cards.updated_at AS "updatedAt",
+      progress.mastery_level AS "masteryLevel",
+      progress.next_review_at AS "nextReviewAt",
+      progress.correct_count AS "correctCount",
+      progress.wrong_count AS "wrongCount"
+    FROM user_flashcards cards
+    LEFT JOIN user_vocab_progress progress
+      ON progress.vocabulary_id = cards.vocabulary_id
+      AND progress.user_id = cards.user_id
+    WHERE cards.user_id = $1
+      AND cards.set_id = $2
+    ORDER BY cards.id ASC
   `;
 
   const { rows } = await pool.query(query, [userId, setId]);
   return rows;
 }
 
+async function resolveVocabularyIds(cards) {
+  const frontTexts = [...new Set(cards.map((card) => card.frontText).filter(Boolean))];
+
+  if (frontTexts.length === 0) {
+    return new Map();
+  }
+
+  const query = `
+    SELECT DISTINCT ON (lookup.front_text)
+      lookup.front_text AS "frontText",
+      vocabulary.id
+    FROM unnest($1::text[]) AS lookup(front_text)
+    INNER JOIN vocabulary
+      ON LOWER(vocabulary.word) = LOWER(lookup.front_text)
+      OR LOWER(COALESCE(vocabulary.kana, '')) = LOWER(lookup.front_text)
+      OR LOWER(COALESCE(vocabulary.romaji, '')) = LOWER(lookup.front_text)
+    ORDER BY lookup.front_text, vocabulary.id ASC
+  `;
+
+  const { rows } = await pool.query(query, [frontTexts]);
+  return rows.reduce((vocabularyIds, row) => {
+    vocabularyIds.set(row.frontText.toLowerCase(), row.id);
+    return vocabularyIds;
+  }, new Map());
+}
+
 async function createFlashcardSet({ userId, title, description, cards }) {
   await ensureFlashcardTables();
+  const vocabularyIds = await resolveVocabularyIds(cards);
 
   const client = await pool.connect();
 
@@ -158,16 +207,18 @@ async function createFlashcardSet({ userId, title, description, cards }) {
     const flashcardSet = setResult.rows[0];
     const values = [];
     const placeholders = cards.map((card, index) => {
-      const offset = index * 4;
+      const offset = index * 5;
+      const vocabularyId = vocabularyIds.get(card.frontText.toLowerCase()) || null;
 
-      values.push(userId, flashcardSet.id, card.frontText, card.backText);
-      return `($${offset + 1}, $${offset + 2}, $${offset + 3}, $${offset + 4}, NOW(), NOW())`;
+      values.push(userId, flashcardSet.id, vocabularyId, card.frontText, card.backText);
+      return `($${offset + 1}, $${offset + 2}, $${offset + 3}, $${offset + 4}, $${offset + 5}, NOW(), NOW())`;
     });
 
     const cardsQuery = `
       INSERT INTO user_flashcards (
         user_id,
         set_id,
+        vocabulary_id,
         front_text,
         back_text,
         created_at,
@@ -177,6 +228,7 @@ async function createFlashcardSet({ userId, title, description, cards }) {
       RETURNING
         id,
         set_id AS "setId",
+        vocabulary_id AS "vocabularyId",
         front_text AS "frontText",
         back_text AS "backText",
         created_at AS "createdAt",
@@ -213,9 +265,31 @@ async function deleteFlashcardSet(userId, setId) {
   return rows[0] || null;
 }
 
+async function findFlashcardsForReview(userId, setId, cardIds) {
+  await ensureFlashcardTables();
+
+  if (cardIds.length === 0) {
+    return [];
+  }
+
+  const query = `
+    SELECT
+      id,
+      vocabulary_id AS "vocabularyId"
+    FROM user_flashcards
+    WHERE user_id = $1
+      AND set_id = $2
+      AND id = ANY($3::bigint[])
+  `;
+
+  const { rows } = await pool.query(query, [userId, setId, cardIds]);
+  return rows;
+}
+
 module.exports = {
   createFlashcardSet,
   deleteFlashcardSet,
+  findFlashcardsForReview,
   findFlashcardSetById,
   listFlashcardSets,
   listFlashcardsBySetId,

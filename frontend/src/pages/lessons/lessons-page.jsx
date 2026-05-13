@@ -23,7 +23,11 @@ function calculateCompletionRate(completedCount, totalCount) {
 
 export function LessonsPage() {
   const { level } = useParams()
-  const { completedLessons } = useLessonsProgress()
+  const {
+    completedLessons,
+    isProgressLoading,
+    progressErrorMessage,
+  } = useLessonsProgress()
   const normalizedLevel = isValidLessonLevel(level) ? level : DEFAULT_LEVEL
 
   const {
@@ -37,6 +41,8 @@ export function LessonsPage() {
   }
 
   const currentLevelMeta = lessonLevelMeta[level]
+  const isPageLoading = isLoading || isProgressLoading
+  const pageErrorMessage = errorMessage || progressErrorMessage
   const completedInLevel = currentLessons.filter((lesson) =>
     completedLessons.has(lesson.id),
   ).length
@@ -81,19 +87,19 @@ export function LessonsPage() {
         </section>
 
         <section className="lessons-grid" aria-label="Danh sách bài học">
-          {isLoading ? (
+          {isPageLoading ? (
             <p className="lessons-feedback">Đang tải bài học từ cơ sở dữ liệu...</p>
           ) : null}
 
-          {!isLoading && errorMessage ? (
-            <p className="lessons-feedback lessons-feedback--error">{errorMessage}</p>
+          {!isPageLoading && pageErrorMessage ? (
+            <p className="lessons-feedback lessons-feedback--error">{pageErrorMessage}</p>
           ) : null}
 
-          {!isLoading && !errorMessage && currentLessons.length === 0 ? (
+          {!isPageLoading && !pageErrorMessage && currentLessons.length === 0 ? (
             <p className="lessons-feedback">Chưa có bài học cho cấp độ này.</p>
           ) : null}
 
-          {!isLoading && !errorMessage
+          {!isPageLoading && !pageErrorMessage
             ? currentLessons.map((lesson, index) => {
                 const previousLesson = currentLessons[index - 1]
                 const isCompleted = completedLessons.has(lesson.id)
@@ -125,6 +131,8 @@ export function LessonsPage() {
                       <span>{lesson.estimatedTime} phút</span>
                       <span>•</span>
                       <span>{lesson.vocabularyCount || 0} từ</span>
+                      <span>•</span>
+                      <span>{lesson.grammarCount || 0} ngữ pháp</span>
                     </div>
 
                     {isLocked ? (

@@ -5,6 +5,7 @@ export const NAV_ITEMS = [
   { label: 'Bài học', path: '/lessons' },
   { label: 'Từ điển', path: '/dictionary' },
   { label: 'Flashcard', path: '/flashcards' },
+  { label: 'AI', path: '/assistant' },
   { label: 'Văn hóa', path: '/culture' },
 ]
 
@@ -112,14 +113,6 @@ export const FEATURES = [
     icon: 'DI',
     tone: 'green',
     category: 'study',
-  },
-  {
-    title: 'Mẫu câu',
-    description: 'Luyện các cách nói hằng ngày cho du lịch, lớp học và hội thoại.',
-    path: '/phrases',
-    icon: 'PH',
-    tone: 'orange',
-    category: 'explore',
   },
   {
     title: 'Tạo flashcard',

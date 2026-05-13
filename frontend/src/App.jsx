@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { RequireAuth } from './components/auth/require-auth'
+import { AssistantPage } from './pages/assistant/assistant-page'
 import { AuthPage } from './pages/auth/auth-page'
 import { DashboardPage } from './pages/dashboard/dashboard-page'
 import { DictionaryPage } from './pages/dictionary/dictionary-page'
@@ -60,6 +61,14 @@ function App() {
         )}
       />
       <Route path="/culture" element={<CulturePage />} />
+      <Route
+        path="/assistant"
+        element={(
+          <RequireAuth>
+            <AssistantPage />
+          </RequireAuth>
+        )}
+      />
       <Route path="/auth" element={<AuthPage mode="login" />} />
       <Route path="/auth/register" element={<AuthPage mode="register" />} />
       <Route

@@ -7,6 +7,7 @@ import {
   deleteMyFlashcardSet,
   fetchMyFlashcardSet,
   fetchMyFlashcardSets,
+  saveFlashcardReview,
 } from '../../services/flashcard.service'
 import { NAV_ITEMS } from '../dashboard/dashboard-content'
 import '../dashboard/dashboard-page.css'
@@ -480,7 +481,15 @@ function FlashcardSetsView({
   )
 }
 
-function StudySummary({ knownCount, unknownCount, totalCards, onRestart }) {
+function StudySummary({
+  knownCount,
+  unknownCount,
+  totalCards,
+  isSavingReview,
+  reviewMessage,
+  reviewErrorMessage,
+  onRestart,
+}) {
   return (
     <section className="flashcards-summary">
       <h2>Kết quả ôn luyện</h2>
@@ -498,6 +507,11 @@ function StudySummary({ knownCount, unknownCount, totalCards, onRestart }) {
           <strong>{totalCards}</strong>
         </article>
       </div>
+      {isSavingReview ? <p className="flashcards-status">Dang luu ket qua on tap...</p> : null}
+      {!isSavingReview && reviewMessage ? <p className="flashcards-status">{reviewMessage}</p> : null}
+      {!isSavingReview && reviewErrorMessage ? (
+        <p className="flashcards-status flashcards-status--error">{reviewErrorMessage}</p>
+      ) : null}
       <button type="button" className="flashcards-primary-btn" onClick={onRestart}>
         Xem lại bộ thẻ
       </button>
@@ -571,6 +585,10 @@ function FlashcardSetDetailView({
   flashcardSet,
   isLoading,
   errorMessage,
+  isSavingReview,
+  reviewMessage,
+  reviewErrorMessage,
+  onSaveReview,
   onRestart,
   studyState,
   setStudyState,
@@ -589,23 +607,35 @@ function FlashcardSetDetailView({
       return
     }
 
-    setStudyState((currentState) => {
-      const nextKnownIds = currentState.knownIds.filter((id) => id !== cardId)
-      const nextUnknownIds = currentState.unknownIds.filter((id) => id !== cardId)
+    const nextKnownIds = studyState.knownIds.filter((id) => id !== cardId)
+    const nextUnknownIds = studyState.unknownIds.filter((id) => id !== cardId)
 
-      if (status === 'known') {
-        nextKnownIds.push(cardId)
-      } else {
-        nextUnknownIds.push(cardId)
-      }
+    if (status === 'known') {
+      nextKnownIds.push(cardId)
+    } else {
+      nextUnknownIds.push(cardId)
+    }
 
-      return {
-        currentIndex: currentState.currentIndex + 1,
-        isFlipped: false,
-        knownIds: nextKnownIds,
-        unknownIds: nextUnknownIds,
-      }
-    })
+    const nextReviewResults = [
+      ...(studyState.reviewResults || []).filter((result) => result.cardId !== cardId),
+      {
+        cardId,
+        isCorrect: status === 'known',
+      },
+    ]
+    const nextState = {
+      currentIndex: studyState.currentIndex + 1,
+      isFlipped: false,
+      knownIds: nextKnownIds,
+      unknownIds: nextUnknownIds,
+      reviewResults: nextReviewResults,
+    }
+
+    setStudyState(nextState)
+
+    if (nextState.currentIndex >= cards.length) {
+      onSaveReview(nextReviewResults)
+    }
   }
 
   return (
@@ -673,6 +703,9 @@ function FlashcardSetDetailView({
           knownCount={knownCount}
           unknownCount={unknownCount}
           totalCards={cards.length}
+          isSavingReview={isSavingReview}
+          reviewMessage={reviewMessage}
+          reviewErrorMessage={reviewErrorMessage}
           onRestart={onRestart}
         />
       ) : null}
@@ -713,11 +746,15 @@ export function FlashcardsPage() {
   const [isSaving, setIsSaving] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [formErrorMessage, setFormErrorMessage] = useState('')
+  const [isSavingReview, setIsSavingReview] = useState(false)
+  const [reviewMessage, setReviewMessage] = useState('')
+  const [reviewErrorMessage, setReviewErrorMessage] = useState('')
   const [studyState, setStudyState] = useState({
     currentIndex: 0,
     isFlipped: false,
     knownIds: [],
     unknownIds: [],
+    reviewResults: [],
   })
 
   useEffect(() => {
@@ -756,7 +793,10 @@ export function FlashcardsPage() {
             isFlipped: false,
             knownIds: [],
             unknownIds: [],
+            reviewResults: [],
           })
+          setReviewMessage('')
+          setReviewErrorMessage('')
         } else {
           setSets(result)
           setActiveSet(null)
@@ -825,7 +865,31 @@ export function FlashcardsPage() {
       isFlipped: false,
       knownIds: [],
       unknownIds: [],
+      reviewResults: [],
     })
+    setReviewMessage('')
+    setReviewErrorMessage('')
+  }
+
+  const handleSaveReview = async (results) => {
+    if (!setId || results.length === 0) {
+      return
+    }
+
+    setIsSavingReview(true)
+    setReviewMessage('')
+    setReviewErrorMessage('')
+
+    try {
+      const review = await saveFlashcardReview(setId, results)
+      setReviewMessage(
+        `Da luu ${review?.reviewedCards || results.length} the. ${review?.trackedVocabulary || 0} tu vung duoc cap nhat.`,
+      )
+    } catch (error) {
+      setReviewErrorMessage(error.message)
+    } finally {
+      setIsSavingReview(false)
+    }
   }
 
   const handleOpenDialog = () => {
@@ -845,6 +909,10 @@ export function FlashcardsPage() {
           flashcardSet={activeSet}
           isLoading={isPageLoading}
           errorMessage={errorMessage}
+          isSavingReview={isSavingReview}
+          reviewMessage={reviewMessage}
+          reviewErrorMessage={reviewErrorMessage}
+          onSaveReview={handleSaveReview}
           onRestart={handleRestartStudy}
           studyState={studyState}
           setStudyState={setStudyState}

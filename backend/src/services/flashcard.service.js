@@ -1,10 +1,16 @@
 const {
   createFlashcardSet,
   deleteFlashcardSet,
+  findFlashcardsForReview,
   findFlashcardSetById,
   listFlashcardSets,
   listFlashcardsBySetId,
 } = require('../models/flashcard.model');
+const {
+  createLearningLog,
+  saveVocabularyReviewResults,
+} = require('../models/progress.model');
+const { pool } = require('../config/db');
 const { createHttpError } = require('../utils/http-error');
 
 const MAX_TITLE_LENGTH = 255;
@@ -12,7 +18,9 @@ const MAX_DESCRIPTION_LENGTH = 1000;
 const MAX_FRONT_LENGTH = 255;
 const MAX_BACK_LENGTH = 2000;
 const MAX_SET_CARDS = 200;
+const MAX_REVIEW_CARDS = 200;
 const FIELD_LABELS = {
+  cardId: 'Ma flashcard',
   setId: 'Mã bộ flashcard',
   title: 'Tên bộ flashcard',
   description: 'Mô tả',
@@ -75,12 +83,41 @@ function normalizeCards(payload) {
   }));
 }
 
+function normalizeReviewResults(payload) {
+  const rawResults = Array.isArray(payload?.results) ? payload.results : [];
+
+  if (rawResults.length === 0) {
+    throw createHttpError(400, 'Can it nhat mot ket qua on tap.');
+  }
+
+  if (rawResults.length > MAX_REVIEW_CARDS) {
+    throw createHttpError(400, `Chi co the luu toi da ${MAX_REVIEW_CARDS} ket qua on tap.`);
+  }
+
+  const resultsByCardId = new Map();
+
+  for (const result of rawResults) {
+    const cardId = parsePositiveInteger(result?.cardId, 'cardId');
+    resultsByCardId.set(cardId, {
+      cardId,
+      isCorrect: Boolean(result?.isCorrect),
+    });
+  }
+
+  return [...resultsByCardId.values()];
+}
+
 function toFlashcardResponse(row) {
   return {
     id: row.id,
     setId: row.setId,
+    vocabularyId: row.vocabularyId || null,
     frontText: row.frontText,
     backText: row.backText,
+    masteryLevel: row.masteryLevel ?? null,
+    nextReviewAt: row.nextReviewAt || null,
+    correctCount: row.correctCount ?? 0,
+    wrongCount: row.wrongCount ?? 0,
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
   };
@@ -144,9 +181,73 @@ async function removeMyFlashcardSet(userId, setIdInput) {
   }
 }
 
+async function saveMyFlashcardReview(userId, setIdInput, payload) {
+  const setId = parsePositiveInteger(setIdInput, 'setId');
+  const results = normalizeReviewResults(payload);
+  const flashcardSet = await findFlashcardSetById(userId, setId);
+
+  if (!flashcardSet) {
+    throw createHttpError(404, 'Khong tim thay bo flashcard.');
+  }
+
+  const cardRows = await findFlashcardsForReview(
+    userId,
+    setId,
+    results.map((result) => result.cardId),
+  );
+  const cardRowsById = new Map(cardRows.map((card) => [Number(card.id), card]));
+  const vocabularyResults = results
+    .map((result) => {
+      const card = cardRowsById.get(result.cardId);
+
+      if (!card?.vocabularyId) {
+        return null;
+      }
+
+      return {
+        vocabularyId: Number(card.vocabularyId),
+        isCorrect: result.isCorrect,
+      };
+    })
+    .filter(Boolean);
+
+  const client = await pool.connect();
+
+  try {
+    await client.query('BEGIN');
+    const vocabularyProgress = await saveVocabularyReviewResults(
+      client,
+      userId,
+      vocabularyResults,
+    );
+    await createLearningLog(client, {
+      userId,
+      activityType: 'review_vocabulary',
+      details: {
+        setId,
+        setTitle: flashcardSet.title,
+        reviewedCards: results.length,
+        trackedVocabulary: vocabularyProgress.trackedCount,
+      },
+    });
+    await client.query('COMMIT');
+
+    return {
+      reviewedCards: results.length,
+      trackedVocabulary: vocabularyProgress.trackedCount,
+    };
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
 module.exports = {
   addMyFlashcardSet,
   getMyFlashcardSet,
   getMyFlashcardSets,
   removeMyFlashcardSet,
+  saveMyFlashcardReview,
 };

@@ -3,6 +3,7 @@ const express = require('express');
 const { pool } = require('./config/db');
 const { authenticateToken } = require('./middleware/auth.middleware');
 const { errorHandler, notFoundHandler } = require('./middleware/error-handler');
+const { assistantRouter } = require('./routes/assistant.routes');
 const { authRouter } = require('./routes/auth.routes');
 const { bookmarkRouter } = require('./routes/bookmark.routes');
 const { dictionaryRouter } = require('./routes/dictionary.routes');
@@ -33,6 +34,7 @@ app.get('/api/health', async (req, res, next) => {
 });
 
 app.use('/api/auth', authRouter);
+app.use('/api/assistant', authenticateToken, assistantRouter);
 app.use('/api/dictionary', dictionaryRouter);
 app.use('/api/lessons', lessonRouter);
 app.use('/api/profile', authenticateToken, profileRouter);
