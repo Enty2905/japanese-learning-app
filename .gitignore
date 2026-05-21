@@ -2,5 +2,6 @@ node_modules
 .env
 dist
 build
+*.log
 .github/
 rule-code/

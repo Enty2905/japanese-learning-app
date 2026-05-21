@@ -12,22 +12,42 @@ async function findLessonsByLevel(level) {
       WHERE lesson_number IS NOT NULL
         AND LOWER(jlpt_level) = LOWER($1)
       GROUP BY lesson_number, jlpt_level
+    ),
+    lesson_rows AS (
+      SELECT
+        id AS "lessonId",
+        slug,
+        (SUBSTRING(slug FROM '-l([0-9]+)$'))::int AS "lessonNumber"
+      FROM lessons
+      WHERE LOWER(jlpt_level) = LOWER($1)
+        AND SUBSTRING(slug FROM '-l([0-9]+)$') IS NOT NULL
+
+      UNION
+
+      SELECT
+        lessons.id AS "lessonId",
+        vocabulary_lessons.slug,
+        vocabulary_lessons."lessonNumber"
+      FROM vocabulary_lessons
+      LEFT JOIN lessons
+        ON lessons.slug = vocabulary_lessons.slug
     )
     SELECT
-      vocabulary_lessons."lessonNumber",
-      vocabulary_lessons."vocabularyCount",
+      lesson_rows."lessonNumber",
+      COALESCE(vocabulary_lessons."vocabularyCount", 0)::int AS "vocabularyCount",
       vocabulary_lessons."sampleWord",
       COALESCE(COUNT(DISTINCT lesson_grammar_points.grammar_point_id), 0)::int AS "grammarCount"
-    FROM vocabulary_lessons
-    LEFT JOIN lessons
-      ON lessons.slug = vocabulary_lessons.slug
+    FROM lesson_rows
+    LEFT JOIN vocabulary_lessons
+      ON vocabulary_lessons.slug = lesson_rows.slug
     LEFT JOIN lesson_grammar_points
-      ON lesson_grammar_points.lesson_id = lessons.id
+      ON lesson_grammar_points.lesson_id = lesson_rows."lessonId"
+    WHERE lesson_rows."lessonNumber" IS NOT NULL
     GROUP BY
-      vocabulary_lessons."lessonNumber",
+      lesson_rows."lessonNumber",
       vocabulary_lessons."vocabularyCount",
       vocabulary_lessons."sampleWord"
-    ORDER BY vocabulary_lessons."lessonNumber" ASC
+    ORDER BY lesson_rows."lessonNumber" ASC
   `;
 
   const { rows } = await pool.query(query, [level]);

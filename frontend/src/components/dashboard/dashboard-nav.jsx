@@ -1,8 +1,15 @@
 import { Link } from 'react-router-dom'
+import { useAuthSession } from '../../hooks/use-auth-session'
 import { ProtectedLink, ProtectedNavLink } from '../auth/protected-link'
 import { AuthFab } from './auth-fab'
 
 export function DashboardNav({ navItems }) {
+  const { user } = useAuthSession()
+  const shouldShowAdmin = user?.role === 'admin' && !navItems.some((item) => item.path === '/admin')
+  const visibleNavItems = shouldShowAdmin
+    ? [...navItems, { label: 'Admin', path: '/admin' }]
+    : navItems
+
   return (
     <>
       <header className="top-nav">
@@ -15,7 +22,7 @@ export function DashboardNav({ navItems }) {
         </Link>
 
         <nav className="nav-links" aria-label="Điều hướng chính">
-          {navItems.map((item) => (
+          {visibleNavItems.map((item) => (
             <ProtectedNavLink
               key={item.label}
               to={item.path}

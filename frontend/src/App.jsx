@@ -1,10 +1,13 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
+import { RequireAdmin } from './components/auth/require-admin'
 import { RequireAuth } from './components/auth/require-auth'
 import { AssistantPage } from './pages/assistant/assistant-page'
 import { AuthPage } from './pages/auth/auth-page'
+import { AdminPage } from './pages/admin/admin-page'
 import { DashboardPage } from './pages/dashboard/dashboard-page'
 import { DictionaryPage } from './pages/dictionary/dictionary-page'
 import { FlashcardsPage } from './pages/flashcards/flashcards-page'
+import { HandwritingPage } from './pages/handwriting/handwriting-page'
 import { HiraganaPage } from './pages/hiragana/hiragana-page'
 import { KatakanaPage } from './pages/katakana/katakana-page'
 import { CulturePage } from './pages/culture/culture-page'
@@ -18,6 +21,14 @@ function App() {
       <Route path="/" element={<DashboardPage />} />
       <Route path="/hiragana" element={<HiraganaPage />} />
       <Route path="/katakana" element={<KatakanaPage />} />
+      <Route
+        path="/handwriting"
+        element={(
+          <RequireAuth>
+            <HandwritingPage />
+          </RequireAuth>
+        )}
+      />
       <Route
         path="/lessons"
         element={(
@@ -77,6 +88,14 @@ function App() {
           <RequireAuth>
             <ProfilePage />
           </RequireAuth>
+        )}
+      />
+      <Route
+        path="/admin"
+        element={(
+          <RequireAdmin>
+            <AdminPage />
+          </RequireAdmin>
         )}
       />
       <Route path="*" element={<Navigate to="/" replace />} />

@@ -1,3 +1,4 @@
+const { findUserById } = require('../models/user.model');
 const { createHttpError } = require('../utils/http-error');
 const { verifyAccessToken } = require('../utils/token');
 
@@ -38,6 +39,27 @@ function authenticateToken(req, res, next) {
   }
 }
 
+async function requireAdmin(req, res, next) {
+  try {
+    const user = await findUserById(req.authUser?.id);
+
+    if (!user || user.status !== 'active' || user.role !== 'admin') {
+      throw createHttpError(403, 'Bạn không có quyền truy cập khu vực quản trị.');
+    }
+
+    req.authUser = {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+    };
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+}
+
 module.exports = {
   authenticateToken,
+  requireAdmin,
 };

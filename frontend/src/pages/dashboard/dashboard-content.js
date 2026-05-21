@@ -2,6 +2,7 @@ export const NAV_ITEMS = [
   { label: 'Trang chủ', path: '/' },
   { label: 'Hiragana', path: '/hiragana' },
   { label: 'Katakana', path: '/katakana' },
+  { label: 'Luyện viết', path: '/handwriting' },
   { label: 'Bài học', path: '/lessons' },
   { label: 'Từ điển', path: '/dictionary' },
   { label: 'Flashcard', path: '/flashcards' },
@@ -96,6 +97,14 @@ export const FEATURES = [
     path: '/katakana',
     icon: 'KA',
     tone: 'purple',
+    category: 'foundation',
+  },
+  {
+    title: 'Luyện viết AI',
+    description: 'Viết kana hoặc kanji rồi để AI nhận diện và gợi ý kết quả gần nhất.',
+    path: '/handwriting',
+    icon: 'HW',
+    tone: 'teal',
     category: 'foundation',
   },
   {

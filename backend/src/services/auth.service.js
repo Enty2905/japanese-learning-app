@@ -90,6 +90,10 @@ async function loginUser({ email, password }) {
     throw createHttpError(401, 'Email hoặc mật khẩu không đúng.');
   }
 
+  if (user.status !== 'active') {
+    throw createHttpError(403, 'Tài khoản này hiện không được phép đăng nhập.');
+  }
+
   return {
     user: sanitizeUser(user),
     token: createAccessToken(user),

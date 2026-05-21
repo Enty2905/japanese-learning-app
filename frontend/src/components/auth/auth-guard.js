@@ -1,5 +1,12 @@
 const LOGIN_REQUIRED_MESSAGE = 'Bạn chưa đăng nhập. Vui lòng đăng nhập để sử dụng chức năng này.'
-const LOGIN_REQUIRED_PATHS = ['/lessons', '/flashcards', '/profile', '/assistant']
+const LOGIN_REQUIRED_PATHS = [
+  '/lessons',
+  '/flashcards',
+  '/profile',
+  '/assistant',
+  '/admin',
+  '/handwriting',
+]
 
 function getPathname(to) {
   if (typeof to === 'string') {

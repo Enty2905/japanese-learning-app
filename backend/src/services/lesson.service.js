@@ -140,7 +140,7 @@ async function getLessonByLevelAndNumber(levelInput, lessonNumberInput) {
     findGrammarByLesson(level.toUpperCase(), lessonNumber),
   ]);
 
-  if (vocabularyRows.length === 0) {
+  if (vocabularyRows.length === 0 && grammarRows.length === 0) {
     throw createHttpError(404, 'Không tìm thấy bài học.');
   }
 
