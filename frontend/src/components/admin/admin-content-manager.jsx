@@ -264,7 +264,7 @@ function AdminContentTable({
   }
 
   return (
-    <div className="admin-content-table-wrap">
+    <div className="admin-content-table-wrap" tabIndex={0} role="region" aria-label="Bảng nội dung, cuộn ngang để xem thêm cột">
       <table className="admin-content-table">
         <thead>
           <tr>

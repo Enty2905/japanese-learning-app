@@ -1,6 +1,6 @@
 import { Link, NavLink } from 'react-router-dom'
 import { useAuthSession } from '../../hooks/use-auth-session'
-import { isLoginRequiredPath, notifyLoginRequired } from './auth-guard'
+import { isLoginRequiredPath } from './auth-guard'
 
 function joinClassName(className, isLocked) {
   if (!isLocked) {
@@ -14,38 +14,32 @@ function useProtectedClick(to, onClick) {
   const { isAuthenticated } = useAuthSession()
   const isLocked = isLoginRequiredPath(to) && !isAuthenticated
 
-  const handleClick = (event) => {
-    if (isLocked) {
-      event.preventDefault()
-      notifyLoginRequired()
-      return
-    }
-
-    onClick?.(event)
-  }
+  const handleClick = (event) => onClick?.(event)
+  const pathname = typeof to === 'string' ? to : `${to.pathname || '/'}${to.search || ''}${to.hash || ''}`
 
   return {
+    destination: isLocked ? `/auth?redirect=${encodeURIComponent(pathname)}` : to,
     isLocked,
     handleClick,
   }
 }
 
 export function ProtectedLink({ to, className, onClick, ...props }) {
-  const { isLocked, handleClick } = useProtectedClick(to, onClick)
+  const { isLocked, handleClick, destination } = useProtectedClick(to, onClick)
 
   return (
     <Link
       {...props}
-      to={to}
+      to={destination}
       className={joinClassName(className, isLocked)}
-      aria-disabled={isLocked || undefined}
+      title={isLocked ? 'Đăng nhập để tiếp tục' : props.title}
       onClick={handleClick}
     />
   )
 }
 
 export function ProtectedNavLink({ to, className, onClick, ...props }) {
-  const { isLocked, handleClick } = useProtectedClick(to, onClick)
+  const { isLocked, handleClick, destination } = useProtectedClick(to, onClick)
   const resolvedClassName = typeof className === 'function'
     ? (navState) => joinClassName(className(navState), isLocked)
     : joinClassName(className, isLocked)
@@ -53,9 +47,9 @@ export function ProtectedNavLink({ to, className, onClick, ...props }) {
   return (
     <NavLink
       {...props}
-      to={to}
+      to={destination}
       className={resolvedClassName}
-      aria-disabled={isLocked || undefined}
+      title={isLocked ? 'Đăng nhập để tiếp tục' : props.title}
       onClick={handleClick}
     />
   )

@@ -45,6 +45,7 @@ export function KatakanaCharacterDetail({
             className={`katakana-action-btn katakana-action-btn--master${
               isMastered ? ' is-active' : ''
             }`}
+            aria-pressed={isMastered}
             onClick={() => onToggleMastered(selectedCharacter.character)}
           >
             <CheckIcon className="katakana-action-icon" />
@@ -52,6 +53,8 @@ export function KatakanaCharacterDetail({
           </button>
         </div>
 
+        <details className="kana-extra">
+          <summary>Cách dùng & từ ví dụ</summary>
         <section className="katakana-detail-section">
           <h3>Cách dùng phổ biến</h3>
           <p>
@@ -73,6 +76,7 @@ export function KatakanaCharacterDetail({
               : 'Chưa có từ ví dụ cho chữ này.'}
           </p>
         </section>
+        </details>
       </div>
     </aside>
   )

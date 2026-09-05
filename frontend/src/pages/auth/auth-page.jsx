@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { saveAuthSession } from '../../services/auth-session.service'
 import { login, register } from '../../services/auth.service'
 import './auth-page.css'
@@ -14,6 +14,10 @@ function createInitialFormState() {
 
 export function AuthPage({ mode = 'login' }) {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const requestedPath = searchParams.get('redirect') || '/'
+  const returnTo = requestedPath.startsWith('/') && !requestedPath.startsWith('//') && !/[\\\\\r\n]/.test(requestedPath) && !requestedPath.startsWith('/auth') ? requestedPath : '/'
+  const redirectQuery = returnTo === '/' ? '' : `?redirect=${encodeURIComponent(returnTo)}`
   const isLoginMode = mode !== 'register'
   const [formState, setFormState] = useState(createInitialFormState)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -61,7 +65,7 @@ export function AuthPage({ mode = 'login' }) {
       saveAuthSession(response)
       setSuccessMessage(response.message || 'Xác thực thành công.')
 
-      navigate('/', { replace: true })
+      navigate(returnTo, { replace: true })
     } catch (error) {
       setErrorMessage(error.message)
     } finally {
@@ -70,7 +74,15 @@ export function AuthPage({ mode = 'login' }) {
   }
 
   return (
-    <main className="auth-page">
+    <main className="auth-page" id="main-content" tabIndex={-1}>
+      <aside className="auth-story" aria-label="Sổ học tiếng Nhật">
+        <Link to="/" className="auth-brand">JP <span>Japanese Learning</span></Link>
+        <span className="ui-eyebrow">SỔ HỌC TIẾNG NHẬT</span>
+        <h2>Mỗi ngày một chữ.<br />Mỗi ngày tiến xa hơn.</h2>
+        <p>Một nơi để lưu bài học, gom những từ mới và nhìn lại hành trình của bạn.</p>
+        <div className="auth-practice" lang="ja" aria-hidden="true">学</div>
+        <small>Từ những nét chữ đầu tiên đến mục tiêu JLPT.</small>
+      </aside>
       <section className="auth-card" aria-label="Xác thực">
         <Link to="/" className="auth-back-link">
           Về trang chủ
@@ -83,24 +95,23 @@ export function AuthPage({ mode = 'login' }) {
             : 'Đăng ký để lưu tiến độ và tạo flashcard.'}
         </p>
 
-        <div className="auth-toggle-group" role="tablist" aria-label="Chế độ xác thực">
+        <nav className="auth-toggle-group" aria-label="Chế độ xác thực">
           <Link
-            to="/auth"
+            to={`/auth${redirectQuery}`}
             className={`auth-toggle ${isLoginMode ? 'active' : ''}`}
-            role="tab"
-            aria-selected={isLoginMode}
+            aria-current={isLoginMode ? 'page' : undefined}
           >
             Đăng nhập
           </Link>
           <Link
-            to="/auth/register"
+            to={`/auth/register${redirectQuery}`}
             className={`auth-toggle ${isLoginMode ? '' : 'active'}`}
-            role="tab"
-            aria-selected={!isLoginMode}
+            aria-current={!isLoginMode ? 'page' : undefined}
           >
             Đăng ký
           </Link>
-        </div>
+        </nav>
+        {returnTo !== '/' ? <p role="status" className="ui-status">Đăng nhập để mở nội dung bạn vừa chọn.</p> : null}
 
         <form className="auth-form" onSubmit={handleSubmit}>
           {!isLoginMode ? (
@@ -149,11 +160,11 @@ export function AuthPage({ mode = 'login' }) {
           </button>
 
           {errorMessage ? (
-            <p className="auth-form-message auth-form-message--error">{errorMessage}</p>
+            <p role="alert" className="auth-form-message auth-form-message--error">{errorMessage}</p>
           ) : null}
 
           {successMessage ? (
-            <p className="auth-form-message auth-form-message--success">{successMessage}</p>
+            <p role="status" className="auth-form-message auth-form-message--success">{successMessage}</p>
           ) : null}
         </form>
       </section>

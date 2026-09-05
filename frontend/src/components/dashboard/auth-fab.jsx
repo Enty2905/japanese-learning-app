@@ -1,38 +1,15 @@
 import { Link } from 'react-router-dom'
 import { useAuthSession } from '../../hooks/use-auth-session'
 
-function buildAvatarLabel(user) {
-  const candidate = user?.displayName || user?.fullName || user?.email || ''
-  const normalizedCandidate = candidate.trim()
-
-  if (!normalizedCandidate) {
-    return 'U'
-  }
-
-  const parts = normalizedCandidate.split(/\s+/).filter(Boolean)
-  if (parts.length >= 2) {
-    return `${parts[0][0]}${parts[1][0]}`.toUpperCase()
-  }
-
-  return normalizedCandidate.slice(0, 2).toUpperCase()
-}
-
 export function AuthFab() {
   const { isAuthenticated, user } = useAuthSession()
-
-  if (isAuthenticated) {
-    return (
-      <Link to="/profile" className="auth-fab auth-fab--avatar" aria-label="Mở hồ sơ">
-        <span className="auth-fab-avatar-text">{buildAvatarLabel(user)}</span>
-      </Link>
-    )
-  }
-
-  return (
-    <Link to="/auth" className="auth-fab" aria-label="Mở trang đăng nhập hoặc đăng ký">
-      <span>Đăng nhập</span>
-      <span>/</span>
-      <span>Đăng ký</span>
+  const name = user?.displayName || user?.fullName || 'Hồ sơ'
+  return isAuthenticated ? (
+    <Link to="/profile" className="auth-fab auth-fab--avatar" aria-label={`Mở hồ sơ của ${name}`}>
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true"><circle cx="12" cy="8" r="3.5" /><path d="M5 21v-3a7 7 0 0 1 14 0v3" /></svg>
+      <span>Hồ sơ</span>
     </Link>
+  ) : (
+    <Link to="/auth" className="auth-fab"><span>Đăng nhập</span><span aria-hidden="true">↗</span></Link>
   )
 }

@@ -273,7 +273,7 @@ export function HandwritingPage() {
     <div className="handwriting-page">
       <DashboardNav navItems={NAV_ITEMS} />
 
-      <main className="handwriting-main">
+      <main className="handwriting-main" id="main-content" tabIndex={-1}>
         <section className="handwriting-shell" aria-label="Luyện viết AI">
           <div className="handwriting-workspace">
             <header className="handwriting-head">
@@ -333,9 +333,9 @@ export function HandwritingPage() {
           </div>
 
           <aside className="handwriting-panel">
-            <section className="handwriting-result">
+            <section className="handwriting-result" aria-live="polite" aria-atomic="true">
               <h2>Kết quả</h2>
-              {errorMessage ? <p className="handwriting-error">{errorMessage}</p> : null}
+              {errorMessage ? <p role="alert" className="handwriting-error">{errorMessage}</p> : null}
               {!errorMessage && !result ? (
                 <div className="handwriting-empty">
                   <BrushIcon />

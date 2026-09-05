@@ -14,9 +14,13 @@ import { CulturePage } from './pages/culture/culture-page'
 import { LessonDetailPage } from './pages/lessons/lesson-detail-page'
 import { LessonsPage } from './pages/lessons/lessons-page'
 import { ProfilePage } from './pages/profile/profile-page'
+import { RouteContext } from './components/ui/route-context'
+import './styles/workspaces.css'
 
 function App() {
   return (
+    <>
+    <RouteContext />
     <Routes>
       <Route path="/" element={<DashboardPage />} />
       <Route path="/hiragana" element={<HiraganaPage />} />
@@ -27,7 +31,7 @@ function App() {
           <RequireAuth>
             <HandwritingPage />
           </RequireAuth>
-        )}
+        )} 
       />
       <Route
         path="/lessons"
@@ -100,6 +104,7 @@ function App() {
       />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
+    </>
   )
 }
 

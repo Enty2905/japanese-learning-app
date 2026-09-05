@@ -42,6 +42,7 @@ export function HiraganaCharacterDetail({
             className={`hiragana-action-btn hiragana-action-btn--master${
               isMastered ? ' is-active' : ''
             }`}
+            aria-pressed={isMastered}
             onClick={() => onToggleMastered(selectedCharacter.character)}
           >
             <CheckIcon className="hiragana-action-icon" />
@@ -49,12 +50,15 @@ export function HiraganaCharacterDetail({
           </button>
         </div>
 
+        <details className="kana-extra">
+          <summary>Mẹo luyện viết</summary>
         <section className="hiragana-writing-tips">
           <h3>Mẹo luyện viết</h3>
           <p>
             Luyện viết chữ này theo đúng thứ tự nét. Viết nhiều lần để tạo phản xạ tay.
           </p>
         </section>
+        </details>
       </div>
     </aside>
   )

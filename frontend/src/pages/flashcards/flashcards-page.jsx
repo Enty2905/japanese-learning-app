@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
+import { Dialog } from '../../components/ui/dialog'
 import { DashboardNav } from '../../components/dashboard/dashboard-nav'
 import { useAuthSession } from '../../hooks/use-auth-session'
 import {
@@ -314,12 +315,11 @@ function CreateFlashcardSetDialog({
   }
 
   return (
-    <div className="flashcards-modal-backdrop" role="presentation">
-      <section className="flashcards-modal" role="dialog" aria-modal="true" aria-labelledby="flashcards-modal-title">
+    <Dialog className="flashcards-modal" labelledBy="flashcards-modal-title" onClose={() => { if (!isSaving) onClose() }}>
         <form onSubmit={handleSubmit}>
           <header className="flashcards-modal-head">
             <h2 id="flashcards-modal-title">Tạo một bộ thẻ mới</h2>
-            <button type="button" className="flashcards-close-btn" onClick={onClose} aria-label="Đóng">
+            <button type="button" className="flashcards-close-btn" disabled={isSaving} onClick={onClose} aria-label="Đóng">
               &times;
             </button>
           </header>
@@ -343,9 +343,10 @@ function CreateFlashcardSetDialog({
             </label>
           </div>
 
-          <div className="flashcards-mode-tabs" role="tablist" aria-label="Cách nhập flash card">
+          <div className="flashcards-mode-tabs" role="group" aria-label="Cách nhập flash card">
             <button
               type="button"
+              aria-pressed={mode === 'manual'}
               className={mode === 'manual' ? 'is-active' : ''}
               onClick={() => setMode('manual')}
             >
@@ -353,6 +354,7 @@ function CreateFlashcardSetDialog({
             </button>
             <button
               type="button"
+              aria-pressed={mode === 'bulk'}
               className={mode === 'bulk' ? 'is-active' : ''}
               onClick={() => setMode('bulk')}
             >
@@ -383,10 +385,10 @@ function CreateFlashcardSetDialog({
             />
           )}
 
-          {errorMessage ? <p className="flashcards-form-error">{errorMessage}</p> : null}
+          {errorMessage ? <p role="alert" className="flashcards-form-error">{errorMessage}</p> : null}
 
           <footer className="flashcards-modal-actions">
-            <button type="button" className="flashcards-secondary-btn" onClick={onClose}>
+            <button type="button" className="flashcards-secondary-btn" disabled={isSaving} onClick={onClose}>
               Hủy
             </button>
             <button
@@ -398,8 +400,7 @@ function CreateFlashcardSetDialog({
             </button>
           </footer>
         </form>
-      </section>
-    </div>
+    </Dialog>
   )
 }
 
@@ -438,30 +439,25 @@ function FlashcardSetsView({
   onDeleteSet,
 }) {
   return (
-    <main className="dashboard-main flashcards-main">
+    <main className="dashboard-main flashcards-main" id="main-content" tabIndex={-1}>
       <section className="flashcards-hero">
         <div className="flashcards-folder-icon">
           <FolderIcon />
         </div>
         <div>
-          <h1>Flash card của {getDisplayName(user)}</h1>
+          <h1>Flashcard của {getDisplayName(user)}</h1>
           <p>{sets.length} bộ thẻ</p>
         </div>
         <button type="button" className="flashcards-add-btn" onClick={onOpenDialog} aria-label="Thêm bộ thẻ">
           <PlusIcon />
+          Tạo bộ thẻ
         </button>
       </section>
 
-      <section className="flashcards-toolbar">
-        <button type="button" className="is-active">Tất cả</button>
-        <button type="button" onClick={onOpenDialog}>
-          <PlusIcon />
-          Bộ thẻ
-        </button>
-      </section>
+      <p className="flashcards-intro">Gom những từ mới vào một bộ thẻ. Ôn lại, tự kiểm tra và ghi nhớ theo nhịp của bạn.</p>
 
-      {isLoading ? <p className="flashcards-status">Đang tải bộ thẻ...</p> : null}
-      {!isLoading && errorMessage ? <p className="flashcards-status flashcards-status--error">{errorMessage}</p> : null}
+      {isLoading ? <p role="status" className="flashcards-status">Đang tải bộ thẻ...</p> : null}
+      {!isLoading && errorMessage ? <p role="alert" className="flashcards-status flashcards-status--error">{errorMessage}</p> : null}
 
       {!isLoading ? (
         <section className="flashcards-set-list" aria-label="Các bộ flash card">
@@ -507,10 +503,10 @@ function StudySummary({
           <strong>{totalCards}</strong>
         </article>
       </div>
-      {isSavingReview ? <p className="flashcards-status">Dang luu ket qua on tap...</p> : null}
-      {!isSavingReview && reviewMessage ? <p className="flashcards-status">{reviewMessage}</p> : null}
+      {isSavingReview ? <p role="status" className="flashcards-status">Đang lưu kết quả ôn tập...</p> : null}
+      {!isSavingReview && reviewMessage ? <p role="status" className="flashcards-status">{reviewMessage}</p> : null}
       {!isSavingReview && reviewErrorMessage ? (
-        <p className="flashcards-status flashcards-status--error">{reviewErrorMessage}</p>
+        <p role="alert" className="flashcards-status flashcards-status--error">{reviewErrorMessage}</p>
       ) : null}
       <button type="button" className="flashcards-primary-btn" onClick={onRestart}>
         Xem lại bộ thẻ
@@ -552,14 +548,15 @@ function StudyCard({
           type="button"
           className={`flashcards-study-card${isFlipped ? ' is-flipped' : ''}`}
           onClick={onFlip}
-          aria-label="Lật flash card"
+          aria-label={`${isFlipped ? card.backText : card.frontText}. Lật thẻ để xem ${isFlipped ? 'mặt trước' : 'đáp án'}.`}
+          aria-pressed={isFlipped}
         >
           <span className="flashcards-study-card-inner">
-            <span className="flashcards-study-card-face flashcards-study-card-front">
+            <span aria-hidden={isFlipped} className="flashcards-study-card-face flashcards-study-card-front">
               <small>Mặt trước</small>
               <strong>{card.frontText}</strong>
             </span>
-            <span className="flashcards-study-card-face flashcards-study-card-back">
+            <span aria-hidden={!isFlipped} className="flashcards-study-card-face flashcards-study-card-back">
               <small>Mặt sau</small>
               <strong>{card.backText}</strong>
             </span>
@@ -639,9 +636,10 @@ function FlashcardSetDetailView({
   }
 
   return (
-    <main className="dashboard-main flashcards-main">
+    <main className="dashboard-main flashcards-main" id="main-content" tabIndex={-1}>
       <section className="flashcards-detail-head">
         <Link to="/flashcards" className="flashcards-back-link">← Các bộ thẻ</Link>
+        {!flashcardSet ? <h1>Ôn tập flashcard</h1> : null}
         {flashcardSet ? (
           <div className="flashcards-detail-head-content">
             <div className="flashcards-detail-title">
@@ -674,8 +672,8 @@ function FlashcardSetDetailView({
         ) : null}
       </section>
 
-      {isLoading ? <p className="flashcards-status">Đang tải bộ thẻ...</p> : null}
-      {!isLoading && errorMessage ? <p className="flashcards-status flashcards-status--error">{errorMessage}</p> : null}
+      {isLoading ? <p role="status" className="flashcards-status">Đang tải bộ thẻ...</p> : null}
+      {!isLoading && errorMessage ? <p role="alert" className="flashcards-status flashcards-status--error">{errorMessage}</p> : null}
 
       {!isLoading && flashcardSet && cards.length === 0 ? (
         <p className="flashcards-empty-state">Bộ này chưa có thẻ.</p>
@@ -742,6 +740,9 @@ export function FlashcardsPage() {
   const [sets, setSets] = useState([])
   const [activeSet, setActiveSet] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [deleteSetId, setDeleteSetId] = useState(null)
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [deleteError, setDeleteError] = useState('')
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
@@ -849,13 +850,17 @@ export function FlashcardsPage() {
   }
 
   const handleDeleteSet = async (flashcardSetId) => {
-    setErrorMessage('')
+    setDeleteError('')
+    setIsDeleting(true)
 
     try {
       await deleteMyFlashcardSet(flashcardSetId)
+      setDeleteSetId(null)
       setSets((currentSets) => currentSets.filter((flashcardSet) => flashcardSet.id !== flashcardSetId))
     } catch (error) {
-      setErrorMessage(error.message)
+      setDeleteError(error.message)
+    } finally {
+      setIsDeleting(false)
     }
   }
 
@@ -883,7 +888,7 @@ export function FlashcardsPage() {
     try {
       const review = await saveFlashcardReview(setId, results)
       setReviewMessage(
-        `Da luu ${review?.reviewedCards || results.length} the. ${review?.trackedVocabulary || 0} tu vung duoc cap nhat.`,
+        `Đã lưu ${review?.reviewedCards || results.length} thẻ. ${review?.trackedVocabulary || 0} từ vựng được cập nhật.`,
       )
     } catch (error) {
       setReviewErrorMessage(error.message)
@@ -898,7 +903,7 @@ export function FlashcardsPage() {
   }
 
   const isViewingLoadedSet = setId ? String(activeSet?.id) === String(setId) : true
-  const isPageLoading = isLoading || (setId ? !isViewingLoadedSet : false)
+  const isPageLoading = isLoading || Boolean(setId && activeSet && !isViewingLoadedSet)
 
   return (
     <div className="dashboard-page flashcards-page">
@@ -908,7 +913,7 @@ export function FlashcardsPage() {
         <FlashcardSetDetailView
           flashcardSet={activeSet}
           isLoading={isPageLoading}
-          errorMessage={errorMessage}
+          errorMessage={errorMessage || (!isPageLoading && !activeSet ? 'Không tìm thấy bộ thẻ này.' : '')}
           isSavingReview={isSavingReview}
           reviewMessage={reviewMessage}
           reviewErrorMessage={reviewErrorMessage}
@@ -924,10 +929,21 @@ export function FlashcardsPage() {
           isLoading={isPageLoading}
           errorMessage={errorMessage}
           onOpenDialog={handleOpenDialog}
-          onDeleteSet={handleDeleteSet}
+          onDeleteSet={(id) => { setDeleteError(''); setDeleteSetId(id) }}
         />
       )}
 
+      {deleteSetId !== null ? (
+        <Dialog className="flashcards-confirm-dialog" labelledBy="delete-set-title" onClose={() => { if (!isDeleting) setDeleteSetId(null) }}>
+          <h2 id="delete-set-title">Xóa bộ thẻ này?</h2>
+          <p>Bộ “{sets.find(set => set.id === deleteSetId)?.title}” và các thẻ bên trong sẽ bị xóa. Thao tác này không thể hoàn tác.</p>
+          {deleteError ? <p role="alert" className="ui-status ui-status--error">{deleteError}</p> : null}
+          <div className="flashcards-modal-actions">
+            <button autoFocus type="button" className="ui-button ui-button--secondary" disabled={isDeleting} onClick={() => setDeleteSetId(null)}>Giữ lại</button>
+            <button type="button" className="ui-button" disabled={isDeleting} onClick={() => handleDeleteSet(deleteSetId)}>{isDeleting ? 'Đang xóa…' : 'Xóa bộ thẻ'}</button>
+          </div>
+        </Dialog>
+      ) : null}
       {isDialogOpen ? (
         <CreateFlashcardSetDialog
           isSaving={isSaving}

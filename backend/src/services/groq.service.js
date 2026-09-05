@@ -16,7 +16,7 @@ function getGroqClient() {
       apiKey: process.env.GROQ_API_KEY,
     });
   }
-
+ 
   return groqClient;
 }
 

@@ -55,7 +55,7 @@ export function LessonsPage() {
     <div className="lessons-page">
       <DashboardNav navItems={NAV_ITEMS} />
 
-      <main className="lessons-main">
+      <main className="lessons-main" id="main-content" tabIndex={-1}>
         <section className={`lessons-hero lessons-hero--${currentLevelMeta.gradientClass}`}>
           <h1>{currentLevelMeta.title}</h1>
           <p>{currentLevelMeta.description}</p>
@@ -79,6 +79,7 @@ export function LessonsPage() {
             <Link
               key={itemLevel}
               to={`/lessons/${itemLevel}`}
+              aria-current={itemLevel === level ? 'page' : undefined}
               className={`lessons-level-tab${itemLevel === level ? ' is-active' : ''}`}
             >
               {itemLevel.toUpperCase()}
@@ -88,15 +89,15 @@ export function LessonsPage() {
 
         <section className="lessons-grid" aria-label="Danh sách bài học">
           {isPageLoading ? (
-            <p className="lessons-feedback">Đang tải bài học từ cơ sở dữ liệu...</p>
+            <p role="status" className="lessons-feedback">Đang tải bài học từ cơ sở dữ liệu...</p>
           ) : null}
 
           {!isPageLoading && pageErrorMessage ? (
-            <p className="lessons-feedback lessons-feedback--error">{pageErrorMessage}</p>
+            <p role="alert" className="lessons-feedback lessons-feedback--error">{pageErrorMessage}</p>
           ) : null}
 
           {!isPageLoading && !pageErrorMessage && currentLessons.length === 0 ? (
-            <p className="lessons-feedback">Chưa có bài học cho cấp độ này.</p>
+            <p role="status" className="lessons-feedback">Chưa có bài học cho cấp độ này.</p>
           ) : null}
 
           {!isPageLoading && !pageErrorMessage
@@ -110,6 +111,7 @@ export function LessonsPage() {
                   <Link
                     key={lesson.id}
                     to={isLocked ? '#' : `/lessons/${level}/${lesson.lessonNumber}`}
+                    aria-disabled={isLocked || undefined}
                     className={`lesson-card${isLocked ? ' is-locked' : ''}`}
                     onClick={(event) => {
                       if (isLocked) {
@@ -117,12 +119,13 @@ export function LessonsPage() {
                       }
                     }}
                   >
+                    <span className="lesson-chapter" aria-hidden="true">{String(lesson.lessonNumber).padStart(2, '0')}</span>
                     <header className="lesson-card-head">
                       <div>
                         <h3>{lesson.title}</h3>
                         <p>{lesson.description}</p>
                       </div>
-                      <span className="lesson-status-badge" aria-hidden="true">
+                      <span className="lesson-status-badge">
                         {isLocked ? 'KHÓA' : isCompleted ? 'XONG' : ''}
                       </span>
                     </header>

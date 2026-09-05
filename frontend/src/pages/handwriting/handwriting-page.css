@@ -1,7 +1,7 @@
 .handwriting-page {
   min-height: 100vh;
-  background: #eef3fb;
-  color: #0f172a;
+  background: var(--surface-inset);
+  color: var(--text-main);
 }
 
 .handwriting-main {
@@ -19,10 +19,10 @@
 
 .handwriting-workspace,
 .handwriting-panel {
-  border: 1px solid #dbe3ef;
-  background: #ffffff;
+  border: 1px solid var(--surface-inset);
+  background: var(--panel-bg);
   border-radius: 12px;
-  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+  box-shadow: none;
 }
 
 .handwriting-workspace {
@@ -40,7 +40,7 @@
 
 .handwriting-head span,
 .handwriting-result h2 {
-  color: #64748b;
+  color: var(--text-muted);
   font-size: 12px;
   font-weight: 800;
   letter-spacing: 0;
@@ -59,11 +59,11 @@
   align-items: center;
   gap: 8px;
   min-height: 38px;
-  border: 1px solid #fed7aa;
+  border: 1px solid var(--stroke);
   border-radius: 999px;
   padding: 0 13px;
-  color: #9a3412;
-  background: #fff7ed;
+  color: var(--error);
+  background: var(--surface-inset);
   font-weight: 800;
   white-space: nowrap;
 }
@@ -72,17 +72,17 @@
   width: 8px;
   height: 8px;
   border-radius: 999px;
-  background: #f97316;
+  background: var(--error);
 }
 
 .handwriting-status.is-online {
-  border-color: #bbf7d0;
-  color: #047857;
-  background: #ecfdf5;
+  border-color: var(--stroke);
+  color: var(--success);
+  background: var(--surface-inset);
 }
 
 .handwriting-status.is-online i {
-  background: #10b981;
+  background: var(--success);
 }
 
 .handwriting-board {
@@ -95,12 +95,12 @@
 .handwriting-board canvas {
   width: min(100%, 520px);
   aspect-ratio: 1;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--stroke);
   border-radius: 10px;
-  background: #ffffff;
+  background: var(--panel-bg);
   cursor: crosshair;
   touch-action: none;
-  box-shadow: inset 0 0 0 1px #f8fafc;
+  box-shadow: none;
 }
 
 .handwriting-toolbar {
@@ -126,13 +126,13 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  border: 1px solid #d8e2f0;
+  border: 1px solid var(--surface-inset);
   padding: 0 14px;
 }
 
 .handwriting-tool-button {
-  color: #334155;
-  background: #ffffff;
+  color: var(--text-main);
+  background: var(--panel-bg);
 }
 
 .handwriting-tool-button svg,
@@ -142,9 +142,9 @@
 }
 
 .handwriting-primary-button {
-  border-color: #2563eb;
-  color: #ffffff;
-  background: #2563eb;
+  border-color: var(--accent);
+  color: var(--on-accent);
+  background: var(--accent);
 }
 
 .handwriting-primary-button:disabled {
@@ -164,9 +164,9 @@
 
 .handwriting-error {
   margin: 0;
-  border: 1px solid #fecaca;
-  background: #fff1f2;
-  color: #b91c1c;
+  border: 1px solid var(--stroke);
+  background: var(--surface-inset);
+  color: var(--error);
   border-radius: 8px;
   padding: 10px 12px;
   line-height: 1.45;
@@ -177,14 +177,14 @@
   display: grid;
   place-items: center;
   gap: 8px;
-  color: #64748b;
+  color: var(--text-muted);
   text-align: center;
 }
 
 .handwriting-empty svg {
   width: 42px;
   height: 42px;
-  color: #94a3b8;
+  color: var(--stroke-strong);
 }
 
 .handwriting-empty p {
@@ -192,10 +192,10 @@
 }
 
 .handwriting-no-result {
-  border: 1px solid #fed7aa;
+  border: 1px solid var(--stroke);
   border-radius: 10px;
-  background: #fff7ed;
-  color: #9a3412;
+  background: var(--surface-inset);
+  color: var(--error);
   padding: 16px;
   display: grid;
   gap: 8px;
@@ -213,26 +213,26 @@
 }
 
 .handwriting-no-result strong {
-  color: #7c2d12;
+  color: var(--accent);
 }
 
 .handwriting-text-result span {
-  color: #2563eb;
+  color: var(--accent);
   font-size: 12px;
   font-weight: 800;
   text-transform: uppercase;
 }
 
 .handwriting-text-result {
-  border: 1px solid #c7d2fe;
+  border: 1px solid var(--stroke);
   border-radius: 10px;
-  background: #eef2ff;
+  background: var(--surface-inset);
   padding: 14px;
 }
 
 .handwriting-text-result p {
   margin: 8px 0 12px;
-  color: #0f172a;
+  color: var(--text-main);
   font-size: 30px;
   font-weight: 800;
   line-height: 1.25;
@@ -248,7 +248,7 @@
 
 .handwriting-text-result div {
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--surface-inset);
   padding: 9px;
 }
 
@@ -258,14 +258,14 @@
 }
 
 .handwriting-text-result dt {
-  color: #64748b;
+  color: var(--text-muted);
   font-size: 12px;
   font-weight: 800;
 }
 
 .handwriting-text-result dd {
   margin-top: 4px;
-  color: #1e293b;
+  color: var(--text-main);
   font-weight: 900;
 }
 

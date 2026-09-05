@@ -1,0 +1,84 @@
+/* Shared reading width, page rhythm and control semantics across application routes. */
+.dashboard-page, .hiragana-page, .katakana-page, .lessons-page, .dictionary-page, .flashcards-page, .culture-page, .handwriting-page, .profile-page, .admin-page, .assistant-page {
+  padding: 0 32px 48px; min-height: 100dvh; background: var(--page-bg); color: var(--text-main);
+}
+.dashboard-main, .hiragana-main, .katakana-main, .lessons-main, .dictionary-main, .culture-main, .handwriting-main, .assistant-main {
+  width: min(1200px, 100%); max-width: 1200px; margin: 0 auto; padding: 0; min-width: 0;
+}
+main > *, .admin-content-layout > *, .admin-insights > *, .admin-content-section, .admin-users-section { min-width: 0; }
+.workspace-heading { padding: 8px 0 16px; }
+.workspace-heading h1 { margin: 8px 0 12px; font-family: var(--font-head); }
+.workspace-heading p { margin: 0; color: var(--text-muted); }
+.lessons-hero { padding: 8px 0 28px; border: 0; border-bottom: 1px solid var(--stroke); border-radius: 0; color: var(--text-main); background: transparent; }
+.lessons-hero h1 { font-family: var(--font-head); line-height: 1.3; }
+.lessons-hero p { font-size: 16px; color: var(--text-muted); opacity: 1; }
+.lessons-hero-meta { color: var(--success); font-size: 14px; }
+.lessons-hero-progress-track { background: var(--stroke); height: 4px; max-width: 520px; }
+.lessons-hero-progress-fill { background: var(--success); }
+.lessons-grid { grid-template-columns: 1fr; gap: 0; border-top: 1px solid var(--stroke); }
+.lesson-card { position: relative; padding: 24px 20px 24px 84px; border: 0; border-bottom: 1px solid var(--stroke); border-radius: 0; background: transparent; }
+.lesson-chapter { position: absolute; left: 20px; top: 24px; font: 28px/1.3 var(--font-head); color: var(--accent); }
+.lesson-card:hover { transform: none; background: var(--panel-bg); }
+.lesson-card.is-locked { opacity: 1; background: var(--surface-inset); }
+.lesson-card.is-locked .lesson-chapter { color: var(--text-muted); }
+.lesson-status-badge { color: var(--text-muted); background: var(--panel-bg); }
+.lesson-card:not(.is-locked) .lesson-status-badge { color: var(--success); }
+.lesson-card-head h3 { line-height: 1.4; }
+.lesson-card-meta { flex-wrap: wrap; }
+.lesson-lock-note { margin-bottom: 0; }
+.lesson-section-title, .lesson-vocabulary-card h3 { font: 500 26px/1.3 var(--font-head); }
+.lesson-content-prose h1 { font-size: 30px; }
+.lesson-content-prose h2 { font-size: 25px; }
+.lesson-content-prose p { line-height: 1.8; }
+.lesson-completed-icon { color: var(--success); }
+.lesson-vocabulary-sound-btn { width: 44px; height: 44px; }
+.lesson-vocabulary-list { overscroll-behavior: contain; }
+.lesson-mark-btn { font-size: 16px; }
+.lesson-quiz-review { background: var(--success-soft); border-color: var(--stroke); }
+.lesson-quiz-review-item { background: var(--error-soft); border-color: var(--error); }
+.lesson-back-link, .flashcards-back-link { min-height: 44px; display: inline-flex; align-items: center; }
+.profile-header { padding-bottom: 24px; border-bottom: 1px solid var(--stroke); }
+.profile-avatar { flex-shrink: 0; background: var(--success); border-radius: 8px; }
+.profile-identity { min-width: 0; overflow-wrap: anywhere; }
+.profile-card, .profile-stat-card { border-radius: 8px; box-shadow: none; }
+.profile-stats-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.profile-stat-value { font-variant-numeric: tabular-nums; }
+.handwriting-head h1 { font-size: clamp(30px, 3.5vw, 44px); line-height: 1.3; }
+.handwriting-workspace, .handwriting-panel { box-shadow: none; border-radius: 8px; }
+.handwriting-board canvas { background: white; border-color: var(--stroke-strong); }
+.handwriting-status { color: var(--warning); background: var(--warning-soft); border-color: var(--stroke); font-size: 12px; }
+.handwriting-text-result { background: var(--success-soft); }
+.handwriting-status.is-online { color: var(--success); background: var(--success-soft); }
+.handwriting-toolbar { justify-content: flex-start; }
+.admin-hero { min-height: 180px; background: var(--text-main); padding: 28px; }
+.admin-hero h1 { font-size: clamp(30px, 3.5vw, 44px); line-height: 1.25; }
+.admin-hero span { border: 0; border-radius: 0; padding: 0; color: #d9ddd4; background: transparent; font-family: var(--font-body); }
+.admin-hero__meta { background: transparent; border-color: #69736b; }
+.admin-metric-card__icon { color: var(--success); background: var(--success-soft); }
+.admin-content-table-wrap, .admin-table-wrap { max-width: 100%; min-width: 0; overscroll-behavior-x: contain; }
+.admin-content-filter, .admin-filter-bar { min-width: 0; }
+.admin-page button, .admin-page input, .admin-page select { min-height: 44px; font-family: var(--font-body); }
+.admin-page h2 { font-size: 26px; line-height: 1.3; }
+.admin-content-section, .admin-users-section, .admin-panel, .admin-metric-card { box-shadow: none; border-radius: 8px; }
+/* Page-local resets must never erase the keyboard focus indicator. */
+input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+button { min-height: 44px; }
+@media (max-width: 1180px) {
+  .admin-content-layout, .admin-users-section__header, .admin-insights, .admin-filter-bar, .admin-content-filter { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 700px) {
+  .dashboard-page, .hiragana-page, .katakana-page, .lessons-page, .dictionary-page, .flashcards-page, .culture-page, .handwriting-page, .profile-page, .admin-page, .assistant-page { padding: 0 16px 32px; }
+  .top-nav { margin-bottom: 24px; }
+  .lesson-card { padding: 20px 12px 20px 56px; }
+  .lesson-chapter { left: 12px; top: 20px; font-size: 24px; }
+  .lesson-card-head { gap: 8px; }
+  .lesson-status-badge { min-width: 40px; padding: 4px; }
+  .lessons-level-tabs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .lessons-level-tab { text-align: center; padding: 10px 4px; }
+  .profile-stats-grid, .admin-metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .admin-metric-card { padding: 14px; }
+  .admin-metric-card__head { align-items: flex-start; flex-direction: column; gap: 6px; }
+  .admin-metric-card strong { margin-top: 10px; }
+  .admin-content-tabs { width: 100%; }
+  .admin-content-tabs button { flex: 1; }
+}

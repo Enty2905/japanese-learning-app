@@ -44,7 +44,7 @@ export function HiraganaPage() {
     <div className="hiragana-page">
       <DashboardNav navItems={NAV_ITEMS} />
 
-      <main className="hiragana-main">
+      <main className="hiragana-main" id="main-content" tabIndex={-1}>
         <HiraganaProgressCard
           masteredCount={masteredCount}
           totalCount={hiraganaCharacters.length}
@@ -52,18 +52,18 @@ export function HiraganaPage() {
         />
 
         <div className="hiragana-content-grid">
-          <HiraganaCharacterGrid
-            characters={hiraganaCharacters}
-            selectedCharacter={selectedCharacter}
-            masteredCharacters={masteredCharacters}
-            onSelectCharacter={handleSelectCharacter}
-          />
-
           <HiraganaCharacterDetail
             selectedCharacter={selectedCharacter}
             masteredCharacters={masteredCharacters}
             onToggleMastered={handleToggleMastered}
             onPlaySound={handlePlaySound}
+          />
+
+          <HiraganaCharacterGrid
+            characters={hiraganaCharacters}
+            selectedCharacter={selectedCharacter}
+            masteredCharacters={masteredCharacters}
+            onSelectCharacter={handleSelectCharacter}
           />
         </div>
 

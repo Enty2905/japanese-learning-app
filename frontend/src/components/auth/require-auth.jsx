@@ -1,20 +1,12 @@
-import { useEffect } from 'react'
-import { Navigate } from 'react-router-dom'
+import { Navigate, useLocation } from 'react-router-dom'
 import { useAuthSession } from '../../hooks/use-auth-session'
-import { notifyLoginRequired } from './auth-guard'
 
 export function RequireAuth({ children }) {
   const { isAuthenticated } = useAuthSession()
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      notifyLoginRequired()
-    }
-  }, [isAuthenticated])
-
+  const location = useLocation()
   if (!isAuthenticated) {
-    return <Navigate to="/auth" replace />
+    const destination = location.pathname + location.search + location.hash
+    return <Navigate to={`/auth?redirect=${encodeURIComponent(destination)}`} replace />
   }
-
   return children
 }

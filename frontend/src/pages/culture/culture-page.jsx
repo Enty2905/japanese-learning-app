@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { DashboardNav } from '../../components/dashboard/dashboard-nav'
 import { NAV_ITEMS } from '../dashboard/dashboard-content'
 import '../dashboard/dashboard-page.css'
@@ -143,7 +144,7 @@ function CultureHero({ articleCount }) {
   return (
     <section className="culture-hero">
       <div className="culture-hero__copy">
-        <span className="culture-eyebrow">Japan culture blog</span>
+        <span className="culture-eyebrow">NHỮNG TRANG VỀ NHẬT BẢN</span>
         <h1>Văn hóa Nhật Bản</h1>
         <p>
           Khám phá ẩm thực, thời trang, lễ hội, học tập và môi trường làm việc để việc học
@@ -180,6 +181,7 @@ function CultureCategoryBar({ activeCategory, onCategoryChange }) {
           key={category.id}
           type="button"
           className={`culture-category-btn${activeCategory === category.id ? ' is-active' : ''}`}
+          aria-pressed={activeCategory === category.id}
           onClick={() => onCategoryChange(category.id)}
         >
           {category.label}
@@ -192,7 +194,7 @@ function CultureCategoryBar({ activeCategory, onCategoryChange }) {
 function CultureArticleCard({ article, isSelected, onSelect }) {
   return (
     <article className={`culture-article-card${isSelected ? ' is-selected' : ''}`}>
-      <button type="button" onClick={() => onSelect(article.id)}>
+      <button type="button" aria-pressed={isSelected} aria-controls="culture-reader" onClick={() => onSelect(article.id)}>
         <div className={`culture-article-visual culture-article-visual--${article.accent}`}>
           <span>{article.visual}</span>
           <small>{article.visualCaption}</small>
@@ -213,7 +215,7 @@ function CultureArticleCard({ article, isSelected, onSelect }) {
 
 function CultureReader({ article }) {
   return (
-    <aside id="culture-reader" className="culture-reader" aria-label="Bài viết đang đọc">
+    <aside tabIndex={-1} id="culture-reader" className="culture-reader" aria-label="Bài viết đang đọc">
       <div className={`culture-reader__cover culture-reader__cover--${article.accent}`}>
         <span>{article.visual}</span>
       </div>
@@ -233,7 +235,7 @@ function CultureReader({ article }) {
           <h3>Từ vựng nên nhớ</h3>
           <div>
             {article.vocabulary.map((word) => (
-              <span key={word}>{word}</span>
+              <Link key={word} to={`/dictionary?q=${encodeURIComponent(word)}&type=vocabulary`}>{word} ↗</Link>
             ))}
           </div>
         </section>
@@ -296,7 +298,7 @@ export function CulturePage() {
     <div className="culture-page">
       <DashboardNav navItems={NAV_ITEMS} />
 
-      <main className="culture-main">
+      <main className="culture-main" id="main-content" tabIndex={-1}>
         <CultureHero articleCount={CULTURE_ARTICLES.length} />
         <CultureCategoryBar activeCategory={activeCategory} onCategoryChange={handleCategoryChange} />
 
@@ -307,7 +309,14 @@ export function CulturePage() {
                 key={article.id}
                 article={article}
                 isSelected={article.id === selectedArticle.id}
-                onSelect={setSelectedArticleId}
+                onSelect={(id) => {
+                  setSelectedArticleId(id)
+                  requestAnimationFrame(() => {
+                    const reader = document.getElementById('culture-reader')
+                    reader?.focus({ preventScroll: true })
+                    reader?.scrollIntoView({ block: 'start' })
+                  })
+                }}
               />
             ))}
           </div>

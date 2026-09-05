@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Navigate, useSearchParams } from 'react-router-dom'
+import { Navigate, Link, useSearchParams } from 'react-router-dom'
 import { DashboardNav } from '../../components/dashboard/dashboard-nav'
 import { useDictionarySearch } from '../../hooks/use-dictionary-search'
 import {
@@ -47,28 +47,6 @@ function VolumeIcon(props) {
         strokeWidth="1.7"
         strokeLinecap="round"
       />
-    </svg>
-  )
-}
-
-function PlusIcon(props) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" {...props}>
-      <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-    </svg>
-  )
-}
-
-function BookIcon(props) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" {...props}>
-      <path
-        d="M6 4h11a2 2 0 0 1 2 2v14H8a3 3 0 0 0-3 3V6a2 2 0 0 1 2-2Z"
-        stroke="currentColor"
-        strokeWidth="1.7"
-        strokeLinejoin="round"
-      />
-      <path d="M8 18h11" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
     </svg>
   )
 }
@@ -169,36 +147,41 @@ function normalizeHistoryEntries(historyEntries, fallbackType) {
 
 function DictionarySearchBox({
   activeType,
-  inputValue,
-  onInputChange,
+  initialValue,
   onSubmit,
   onTabChange,
 }) {
+  const [inputValue, setInputValue] = useState(initialValue)
+  useEffect(() => {
+    // Back can interrupt a pending router transition before the keyed field remounts.
+    const restoreQuery = () => setInputValue(new URLSearchParams(window.location.search).get('q') || '')
+    window.addEventListener('popstate', restoreQuery)
+    return () => window.removeEventListener('popstate', restoreQuery)
+  }, [])
   return (
     <section className="dictionary-search-panel">
-      <form className="dictionary-search-row" onSubmit={onSubmit}>
+      <form className="dictionary-search-row" onSubmit={onSubmit} autoComplete="off">
         <SearchIcon className="dictionary-search-icon" />
         <input
+          name="query"
+          autoComplete="off"
           value={inputValue}
-          onChange={(event) => onInputChange(event.target.value)}
+          onChange={(event) => setInputValue(event.target.value)}
           className="dictionary-search-input"
           placeholder="日本, nihon, Nhật Bản"
           aria-label="Nhập từ khóa tra cứu"
         />
 
-        <select className="dictionary-language-select" aria-label="Chọn ngôn ngữ">
-          <option>Nhật - Việt</option>
-          <option>Việt - Nhật</option>
-        </select>
+        <button type="submit" className="ui-button dictionary-submit">Tra cứu</button>
       </form>
 
-      <div className="dictionary-tabs" role="tablist" aria-label="Loại tra cứu">
+      <div className="dictionary-tabs" role="group" aria-label="Loại tra cứu">
         {SEARCH_TABS.map((tab) => (
           <button
             key={tab.id}
             type="button"
             className={`dictionary-tab${activeType === tab.id ? ' is-active' : ''}`}
-            disabled={tab.disabled}
+            aria-pressed={activeType === tab.id}
             onClick={() => onTabChange(tab.id)}
           >
             {tab.label}
@@ -224,8 +207,8 @@ function EmptyDictionaryState({
 
         <ul className="dictionary-tip-list">
           <li>Đăng nhập tài khoản để đồng bộ dữ liệu và sử dụng trên nhiều thiết bị.</li>
-          <li>Có thể chuyển thành te, ta, bị động... ở dạng nguyên thể, thử 食べた.</li>
-          <li>Tra cứu katakana: viết hoa chữ đó, ví dụ: BETONAMU.</li>
+          <li>Tra bằng chữ Nhật, cách đọc hoặc nghĩa tiếng Việt. Bắt đầu với 日本.</li>
+          <li>Chọn Hán tự để xem cách đọc, bộ thủ và gợi ý ghi nhớ.</li>
         </ul>
 
         <KeywordSection
@@ -234,7 +217,7 @@ function EmptyDictionaryState({
           emptyText="Chưa có lịch sử tra cứu."
           onKeywordSelect={onKeywordSelect}
         />
-        <KeywordSection title="Từ khoá hot" keywords={HOT_KEYWORDS} onKeywordSelect={onKeywordSelect} />
+        <KeywordSection title="Từ vựng gợi ý" keywords={HOT_KEYWORDS} onKeywordSelect={onKeywordSelect} />
 
         <section className="dictionary-keyword-section">
           <h3>JLPT</h3>
@@ -255,7 +238,7 @@ function EmptyDictionaryState({
             memoryHints.map((item) => (
               <article key={item.id || item.kanji} className="dictionary-memory-item">
                 <div>
-                  <span>{item.kanji}</span>
+                  <Link to={`/dictionary?q=${encodeURIComponent(item.kanji)}&type=kanji`}>{item.kanji}</Link>
                   <strong>{item.hanViet || item.onyomi || item.kunyomi}</strong>
                 </div>
                 <p>{getDisplayMeaning(item)}</p>
@@ -283,7 +266,6 @@ function KeywordSection({
     <section className="dictionary-keyword-section">
       <div className="dictionary-keyword-head">
         <h3>{title}</h3>
-        <button type="button">Xem thêm</button>
       </div>
 
       <div className="dictionary-chip-list">
@@ -316,25 +298,10 @@ function VocabularyResult({ vocabulary, relatedKanji, query }) {
   return (
     <div className="dictionary-result-grid">
       <section className="dictionary-panel dictionary-entry-panel">
-        <div className="dictionary-entry-toolbar">
-          <button type="button" className="dictionary-segment-btn" aria-label="Thêm vào sổ tay">
-            <PlusIcon />
-          </button>
-          <button type="button" className="dictionary-segment-btn" aria-label="Mở sổ tay">
-            <BookIcon />
-          </button>
-          <button
-            type="button"
-            className="dictionary-segment-btn"
-            onClick={() => playText(primaryWord.word)}
-            aria-label="Phát âm"
-          >
-            <VolumeIcon />
-          </button>
-        </div>
+
 
         <header className="dictionary-entry-header">
-          <h1>{primaryWord.word}</h1>
+          <h2 lang="ja">{primaryWord.word}</h2>
           <p>
             {primaryWord.kana ? `「${primaryWord.kana}」` : null}
             {primaryWord.hanViet ? ` 「${primaryWord.hanViet}」` : null}
@@ -349,11 +316,7 @@ function VocabularyResult({ vocabulary, relatedKanji, query }) {
           </button>
         </header>
 
-        <div className="dictionary-action-row">
-          <button type="button">Kết hợp từ</button>
-          <button type="button">Ảnh minh họa</button>
-          <button type="button">Luyện phát âm</button>
-        </div>
+
 
         <section className="dictionary-meaning-section">
           <div className="dictionary-meaning-head">
@@ -393,7 +356,7 @@ function VocabularyResult({ vocabulary, relatedKanji, query }) {
           <h2>Các từ vựng liên quan tới {query}</h2>
           {vocabulary.slice(0, 6).map((item) => (
             <article key={item.id} className="dictionary-lookup-item">
-              <span>{item.word}</span>
+              <Link to={`/dictionary?q=${encodeURIComponent(item.word)}&type=vocabulary`}>{item.word}</Link>
               <p>{getDisplayMeaning(item)}</p>
               <small>{item.kana || item.romaji}</small>
             </article>
@@ -432,19 +395,11 @@ function KanjiResult({ kanji, query }) {
   return (
     <div className="dictionary-result-grid">
       <section className="dictionary-panel dictionary-entry-panel">
-        <div className="dictionary-entry-toolbar">
-          <button type="button" className="dictionary-segment-btn" aria-label="Luyện viết">あ</button>
-          <button type="button" className="dictionary-segment-btn" aria-label="Sổ tay">
-            <BookIcon />
-          </button>
-          <button type="button" className="dictionary-segment-btn" aria-label="Thêm">
-            <PlusIcon />
-          </button>
-        </div>
+
 
         <header className="dictionary-kanji-header">
           <div>
-            <h1>{primaryKanji.kanji}</h1>
+            <h2 lang="ja">{primaryKanji.kanji}</h2>
             <p>「{primaryKanji.hanViet || primaryKanji.meaningVi}」</p>
           </div>
           <KanjiStrokeBox kanji={primaryKanji} />
@@ -499,7 +454,7 @@ function KanjiResult({ kanji, query }) {
               key={item.id}
               className={`dictionary-kanji-result-item${item.id === primaryKanji.id ? ' is-active' : ''}`}
             >
-              <span>{item.kanji}</span>
+              <Link to={`/dictionary?q=${encodeURIComponent(item.kanji)}&type=kanji`}>{item.kanji}</Link>
               <div>
                 <strong>{item.hanViet || item.meaningVi}</strong>
                 <p>{getDisplayMeaning(item)}</p>
@@ -578,7 +533,6 @@ export function DictionaryPage({ redirectToDictionary = false }) {
   const queryParam = searchParams.get('q') || ''
   const typeParam = searchParams.get('type') || 'vocabulary'
   const activeType = typeParam === 'kanji' ? 'kanji' : 'vocabulary'
-  const [inputValue, setInputValue] = useState(queryParam)
   const [guestHistory, setGuestHistory] = useState(readGuestHistory)
   const [accountHistory, setAccountHistory] = useState([])
   const [memoryHints, setMemoryHints] = useState([])
@@ -645,7 +599,7 @@ export function DictionaryPage({ redirectToDictionary = false }) {
 
   const handleSubmit = (event) => {
     event.preventDefault()
-    const normalizedInput = inputValue.trim()
+    const normalizedInput = String(new FormData(event.currentTarget).get('query') || '').trim()
 
     if (normalizedInput) {
       setGuestHistory(writeGuestHistory(normalizedInput, activeType))
@@ -662,7 +616,6 @@ export function DictionaryPage({ redirectToDictionary = false }) {
     const nextQuery = typeof keyword === 'string' ? keyword : keyword.query
     const nextType = typeof keyword === 'string' ? activeType : keyword.type
 
-    setInputValue(nextQuery)
     setGuestHistory(writeGuestHistory(nextQuery, nextType))
     setSearchParams({ q: nextQuery, type: nextType })
   }
@@ -671,11 +624,12 @@ export function DictionaryPage({ redirectToDictionary = false }) {
     <div className="dictionary-page">
       <DashboardNav navItems={NAV_ITEMS} />
 
-      <main className="dictionary-main">
+      <main className="dictionary-main" id="main-content" tabIndex={-1}>
+        <header className="workspace-heading"><span className="ui-eyebrow">SỔ TỪ VỰNG</span><h1>Từ điển Nhật – Việt</h1><p>Hiểu một từ. Mở thêm một cách diễn đạt.</p></header>
         <DictionarySearchBox
           activeType={activeType}
-          inputValue={inputValue}
-          onInputChange={setInputValue}
+          key={queryParam}
+          initialValue={queryParam}
           onSubmit={handleSubmit}
           onTabChange={handleTabChange}
         />
@@ -688,8 +642,8 @@ export function DictionaryPage({ redirectToDictionary = false }) {
           />
         ) : (
           <>
-            {isLoading ? <p className="dictionary-status">Đang tra cứu dữ liệu...</p> : null}
-            {errorMessage ? <p className="dictionary-status dictionary-status--error">{errorMessage}</p> : null}
+            {isLoading ? <p role="status" className="dictionary-status">Đang tra cứu dữ liệu...</p> : null}
+            {errorMessage ? <p role="alert" className="dictionary-status dictionary-status--error">{errorMessage}</p> : null}
             {!isLoading && !errorMessage && totalResults === 0 ? (
               <NoResult query={queryParam} label={activeType === 'kanji' ? 'kanji' : 'từ vựng'} />
             ) : null}

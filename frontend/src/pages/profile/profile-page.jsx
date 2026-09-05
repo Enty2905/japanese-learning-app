@@ -128,7 +128,7 @@ export function ProfilePage() {
     <div className="dashboard-page">
       <DashboardNav navItems={NAV_ITEMS} />
 
-      <main className="dashboard-main profile-main">
+      <main className="dashboard-main profile-main" id="main-content" tabIndex={-1}>
         <section className="profile-card">
           <header className="profile-header">
             <div className="profile-avatar">{buildAvatarLabel(displayUser)}</div>
@@ -148,10 +148,10 @@ export function ProfilePage() {
             </Link>
           </div>
 
-          {isLoading ? <p className="profile-feedback">Đang tải dữ liệu hồ sơ...</p> : null}
+          {isLoading ? <p role="status" className="profile-feedback">Đang tải dữ liệu hồ sơ...</p> : null}
 
           {!isLoading && errorMessage ? (
-            <p className="profile-feedback profile-feedback--error">{errorMessage}</p>
+            <p role="alert" className="profile-feedback profile-feedback--error">{errorMessage}</p>
           ) : null}
         </section>
 

@@ -354,7 +354,7 @@ function LessonQuiz({
         ))}
 
         {quizErrorMessage ? (
-          <p className="lessons-feedback lessons-feedback--error">{quizErrorMessage}</p>
+          <p role="alert" className="lessons-feedback lessons-feedback--error">{quizErrorMessage}</p>
         ) : null}
 
         {quizResult ? (
@@ -385,7 +385,7 @@ function LessonQuiz({
         ) : null}
 
         {quizResult ? (
-          <p className="lessons-feedback">
+          <p role="status" className="lessons-feedback">
             Đúng {quizResult.correctCount}/{quizResult.questionCount}. Điểm cao nhất đã được lưu.
           </p>
         ) : null}
@@ -500,7 +500,7 @@ export function LessonDetailPage() {
       <div className="lessons-page">
         <DashboardNav navItems={NAV_ITEMS} />
 
-        <main className="lessons-main">
+        <main className="lessons-main" id="main-content" tabIndex={-1}>
           <section className="lesson-detail-card">
             <h1>Bài học đang bị khóa</h1>
             <p>Hãy hoàn thành bài trước trước khi mở bài này.</p>
@@ -518,9 +518,9 @@ export function LessonDetailPage() {
       <div className="lessons-page">
         <DashboardNav navItems={NAV_ITEMS} />
 
-        <main className="lessons-main">
+        <main className="lessons-main" id="main-content" tabIndex={-1}>
           <section className="lesson-detail-card">
-            <p className="lessons-feedback">Đang tải bài học từ cơ sở dữ liệu...</p>
+            <p role="status" className="lessons-feedback">Đang tải bài học từ cơ sở dữ liệu...</p>
           </section>
         </main>
       </div>
@@ -532,9 +532,9 @@ export function LessonDetailPage() {
       <div className="lessons-page">
         <DashboardNav navItems={NAV_ITEMS} />
 
-        <main className="lessons-main">
+        <main className="lessons-main" id="main-content" tabIndex={-1}>
           <section className="lesson-detail-card">
-            <p className="lessons-feedback lessons-feedback--error">
+            <p role="alert" className="lessons-feedback lessons-feedback--error">
               {errorMessage || progressErrorMessage || 'Không tìm thấy bài học.'}
             </p>
             <Link to={`/lessons/${level}`} className="lesson-primary-btn">
@@ -571,7 +571,7 @@ export function LessonDetailPage() {
     <div className="lessons-page">
       <DashboardNav navItems={NAV_ITEMS} />
 
-      <main className="lessons-main lessons-main--detail">
+      <main className="lessons-main lessons-main--detail" id="main-content" tabIndex={-1}>
         <div>
           <Link to={`/lessons/${level}`} className="lesson-back-link">
             <ArrowLeftIcon className="lesson-back-icon" />
@@ -671,7 +671,7 @@ export function LessonDetailPage() {
             </button>
 
             {completeErrorMessage ? (
-              <p className="lessons-feedback lessons-feedback--error">{completeErrorMessage}</p>
+              <p role="alert" className="lessons-feedback lessons-feedback--error">{completeErrorMessage}</p>
             ) : null}
           </div>
 

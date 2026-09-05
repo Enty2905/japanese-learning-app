@@ -172,7 +172,7 @@ function AdminUsersTable({
   }
 
   return (
-    <div className="admin-table-wrap">
+    <div className="admin-table-wrap" tabIndex={0} role="region" aria-label="Bảng người dùng, cuộn ngang để xem thêm cột">
       <table className="admin-users-table">
         <thead>
           <tr>
@@ -357,7 +357,7 @@ export function AdminPage() {
     <div className="dashboard-page admin-page">
       <DashboardNav navItems={NAV_ITEMS} />
 
-      <main className="dashboard-main admin-main">
+      <main className="dashboard-main admin-main" id="main-content" tabIndex={-1}>
         <section className="admin-hero">
           <div>
             <span>Admin</span>
@@ -370,11 +370,11 @@ export function AdminPage() {
           </div>
         </section>
 
-        {isLoading ? <p className="admin-feedback">Đang tải dữ liệu quản trị...</p> : null}
-        {errorMessage ? <p className="admin-feedback admin-feedback--error">{errorMessage}</p> : null}
-        {saveMessage ? <p className="admin-feedback admin-feedback--success">{saveMessage}</p> : null}
+        {isLoading ? <p role="status" className="admin-feedback">Đang tải dữ liệu quản trị...</p> : null}
+        {errorMessage ? <p role="alert" className="admin-feedback admin-feedback--error">{errorMessage}</p> : null}
+        {saveMessage ? <p role="status" className="admin-feedback admin-feedback--success">{saveMessage}</p> : null}
         {saveErrorMessage ? (
-          <p className="admin-feedback admin-feedback--error">{saveErrorMessage}</p>
+          <p role="alert" className="admin-feedback admin-feedback--error">{saveErrorMessage}</p>
         ) : null}
 
         <AdminMetricGrid summary={overview?.summary} />

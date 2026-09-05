@@ -83,7 +83,7 @@ function AssistantSources({ sources }) {
   if (!Array.isArray(sources) || sources.length === 0) {
     return (
       <aside className="assistant-sources">
-        <h2>Ngữ cảnh RAG</h2>
+        <h2>Tài liệu tham khảo</h2>
         <p>Chưa có dữ liệu nội bộ khớp rõ với câu hỏi hiện tại.</p>
       </aside>
     )
@@ -91,7 +91,7 @@ function AssistantSources({ sources }) {
 
   return (
     <aside className="assistant-sources">
-      <h2>Ngữ cảnh RAG</h2>
+      <h2>Tài liệu tham khảo</h2>
       <div className="assistant-source-list">
         {sources.map((source) => (
           <article key={`${source.type}-${source.label}`} className="assistant-source-item">
@@ -129,7 +129,7 @@ export function AssistantPage() {
     isSending,
   ])
   const currentSessionTitle = useMemo(() => {
-    return sessions.find((session) => session.id === sessionId)?.title || 'Chat mới'
+    return sessions.find((session) => session.id === sessionId)?.title || 'Cuộc trò chuyện mới'
   }, [sessionId, sessions])
 
   useEffect(() => {
@@ -258,18 +258,17 @@ export function AssistantPage() {
     <div className="assistant-page">
       <DashboardNav navItems={NAV_ITEMS} />
 
-      <main className="assistant-main">
+      <main className="assistant-main" id="main-content" tabIndex={-1}>
         <section className="assistant-shell" aria-label="AI Assistant">
           <aside className="assistant-sidebar">
             <div className="assistant-sidebar__head">
               <div className="assistant-brand">
-                <div className="assistant-brand__logo">JP</div>
                 <div>
-                  <span>Japanese</span>
-                  <h1>Learning</h1>
+                  <span>HỎI & HIỂU</span>
+                  <h1>Trợ lý học tập</h1>
                 </div>
               </div>
-              <button type="button" onClick={handleNewChat} aria-label="Tao chat moi">+</button>
+              <button type="button" onClick={handleNewChat} disabled={isSending}>＋ Chat mới</button>
             </div>
 
             <div className="assistant-levels" aria-label="Chọn trình độ">
@@ -277,7 +276,8 @@ export function AssistantPage() {
                 <button
                   key={level}
                   type="button"
-                  title={`AI tra loi theo trinh do ${level}`}
+                  title={`Giải thích theo trình độ ${level}`}
+                  aria-pressed={selectedLevel === level}
                   className={selectedLevel === level ? 'is-active' : ''}
                   onClick={() => setSelectedLevel(level)}
                 >
@@ -286,8 +286,8 @@ export function AssistantPage() {
               ))}
             </div>
 
-            <div className="assistant-session-list">
-              <h2>Lịch sử chat</h2>
+            <details className="assistant-session-list">
+              <summary>Lịch sử trò chuyện ({sessions.length})</summary>
               {isLoadingSessions ? <p>Đang tải...</p> : null}
               {!isLoadingSessions && sessions.length === 0 ? <p>Chưa có phiên chat.</p> : null}
               {sessions.map((session) => (
@@ -295,12 +295,14 @@ export function AssistantPage() {
                   key={session.id}
                   type="button"
                   className={sessionId === session.id ? 'is-active' : ''}
+                  disabled={isSending}
+                  aria-pressed={sessionId === session.id}
                   onClick={() => handleLoadSession(session.id)}
                 >
                   {session.title || 'Phiên chat'}
                 </button>
               ))}
-            </div>
+            </details>
           </aside>
 
           <section className="assistant-chat" data-level={selectedLevel}>
@@ -309,7 +311,7 @@ export function AssistantPage() {
                 <SparkIcon className="assistant-chat__icon" />
                 <div>
                   <h2>{currentSessionTitle}</h2>
-                  <p>{modelName || 'llama-3.3-70b-versatile'}</p>
+                  <p title={modelName || undefined}>Giải thích theo trình độ {selectedLevel} · AI có thể nhầm, hãy đối chiếu bài học.</p>
                 </div>
               </div>
             </div>
@@ -330,7 +332,7 @@ export function AssistantPage() {
             </div>
 
             {errorMessage ? (
-              <p className="assistant-error">{errorMessage}</p>
+              <p role="alert" className="assistant-error">{errorMessage}</p>
             ) : null}
 
             <form className="assistant-compose" onSubmit={handleSubmit}>

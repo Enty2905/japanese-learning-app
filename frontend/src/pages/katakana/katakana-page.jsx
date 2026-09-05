@@ -44,7 +44,7 @@ export function KatakanaPage() {
     <div className="katakana-page">
       <DashboardNav navItems={NAV_ITEMS} />
 
-      <main className="katakana-main">
+      <main className="katakana-main" id="main-content" tabIndex={-1}>
         <KatakanaProgressCard
           masteredCount={masteredCount}
           totalCount={katakanaCharacters.length}
@@ -52,18 +52,18 @@ export function KatakanaPage() {
         />
 
         <div className="katakana-content-grid">
-          <KatakanaCharacterGrid
-            characters={katakanaCharacters}
-            selectedCharacter={selectedCharacter}
-            masteredCharacters={masteredCharacters}
-            onSelectCharacter={handleSelectCharacter}
-          />
-
           <KatakanaCharacterDetail
             selectedCharacter={selectedCharacter}
             masteredCharacters={masteredCharacters}
             onToggleMastered={handleToggleMastered}
             onPlaySound={handlePlaySound}
+          />
+
+          <KatakanaCharacterGrid
+            characters={katakanaCharacters}
+            selectedCharacter={selectedCharacter}
+            masteredCharacters={masteredCharacters}
+            onSelectCharacter={handleSelectCharacter}
           />
         </div>
 

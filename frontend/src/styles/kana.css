@@ -1,0 +1,63 @@
+/* A shared five-vowel practice sheet for both kana alphabets. */
+:is(.hiragana-main, .katakana-main) { width: min(1200px, calc(100% - 64px)); margin: 0 auto; display: grid; gap: 24px; padding: 32px 0 64px; }
+:is(.hiragana-progress-card, .katakana-progress-card) { padding: 0 0 24px; border-bottom: 1px solid var(--stroke); }
+:is(.hiragana-progress-card, .katakana-progress-card) h1 { margin: 0; font-family: var(--font-head); }
+:is(.hiragana-progress-card, .katakana-progress-card) p { margin: 10px 0; color: var(--text-muted); font-size: 16px; }
+:is(.hiragana-progress-meta, .katakana-progress-meta) { color: var(--success); font-size: 14px; margin-top: 20px; }
+:is(.hiragana-progress-track, .katakana-progress-track) { height: 4px; margin-top: 8px; background: var(--stroke); max-width: 520px; overflow: hidden; }
+:is(.hiragana-progress-fill, .katakana-progress-fill) { height: 100%; background: var(--success); }
+:is(.hiragana-content-grid, .katakana-content-grid) { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(280px, 1fr); gap: 40px; align-items: start; }
+.kana-chart-panel { min-width: 0; grid-column: 1; grid-row: 1; }
+.kana-extra { grid-column: 1 / -1; border-top: 1px solid var(--stroke); }
+.kana-extra summary { min-height: 44px; padding: 10px 0; color: var(--text-muted); font-size: 14px; }
+.kana-extra section:first-of-type { border-top: 0; padding-top: 4px; }
+.kana-chart-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.kana-chart-heading h2 { margin: 0 0 16px; font-family: var(--font-head); }
+.kana-chart-heading > span { color: var(--text-muted); font-size: 13px; }
+.kana-vowels, .kana-chart-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+.kana-vowels { color: var(--text-muted); text-align: center; margin-bottom: 8px; }
+.kana-key { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; min-height: 84px; padding: 12px 4px; border: 1px solid var(--stroke); border-radius: 4px; color: var(--text-main); background: var(--panel-bg); }
+.kana-key > span { font-size: 32px; line-height: 1.2; }
+.kana-key small { font-size: 12px; color: var(--text-muted); }
+.kana-key:hover { border-color: var(--accent); background: var(--accent-soft); }
+.kana-key.is-mastered { border-color: var(--success); background: var(--success-soft); }
+.kana-key.is-selected { outline: 2px solid var(--accent); outline-offset: -2px; background: var(--accent-soft); }
+.kana-key:focus-visible { outline: 3px solid var(--text-main); outline-offset: 3px; }
+.kana-key i { position: absolute; right: 6px; top: 0; font-size: 13px; font-style: normal; color: var(--success); }
+.kana-gap { background: repeating-linear-gradient(135deg, transparent 0 8px, var(--stroke) 8px 9px); opacity: .3; }
+:is(.hiragana-card, .katakana-card) { border: 1px solid var(--stroke); border-radius: 8px; padding: 24px; background: var(--panel-bg); }
+:is(.hiragana-detail-card, .katakana-detail-card) { position: sticky; top: 24px; grid-column: 2; grid-row: 1; border-top: 3px solid var(--accent); }
+:is(.hiragana-detail-body, .katakana-detail-body) { display: grid; gap: 24px; }
+:is(.hiragana-detail-header, .katakana-detail-header) { text-align: center; }
+:is(.hiragana-detail-character, .katakana-detail-character) { width: 180px; height: 180px; margin: 0 auto; display: grid; place-items: center; border: 1px solid var(--stroke-strong); font: 110px/1 var(--font-japanese); background: linear-gradient(to right, transparent calc(50% - .5px), var(--stroke) 50%, transparent calc(50% + .5px)), linear-gradient(to bottom, transparent calc(50% - .5px), var(--stroke) 50%, transparent calc(50% + .5px)); }
+:is(.hiragana-detail-romaji, .katakana-detail-romaji) { margin-top: 12px; font-size: 25px; color: var(--text-muted); }
+:is(.hiragana-detail-actions, .katakana-detail-actions) { display: grid; gap: 8px; }
+:is(.hiragana-action-btn, .katakana-action-btn) { display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 10px 12px; min-height: 46px; border-radius: 8px; border: 1px solid var(--stroke-strong); background: var(--panel-bg); color: var(--text-main); font-weight: 600; }
+:is(.hiragana-action-btn--play, .katakana-action-btn--play) { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+:is(.hiragana-action-btn--play, .katakana-action-btn--play):hover { background: var(--accent-hover); }
+:is(.hiragana-action-btn--master, .katakana-action-btn--master).is-active { background: var(--success-soft); color: var(--success); border-color: var(--success); }
+:is(.hiragana-action-icon, .katakana-action-icon) { width: 18px; height: 18px; }
+:is(.hiragana-writing-tips, .katakana-writing-tips), :is(.hiragana-detail-section, .katakana-detail-section) { padding-top: 16px; border-top: 1px solid var(--stroke); }
+:is(.hiragana-writing-tips, .katakana-writing-tips) h3, :is(.hiragana-detail-section, .katakana-detail-section) h3, :is(.hiragana-tip-item, .katakana-tip-item) h3 { margin: 0; font-size: 18px; }
+:is(.hiragana-writing-tips, .katakana-writing-tips) p, :is(.hiragana-detail-section, .katakana-detail-section) p, :is(.hiragana-tip-item, .katakana-tip-item) p, :is(.hiragana-about-card, .katakana-about-card) p { color: var(--text-muted); margin: 8px 0 0; }
+:is(.hiragana-study-tips-grid, .katakana-study-tips-grid) { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+:is(.hiragana-card-title, .katakana-card-title), :is(.hiragana-about-title, .katakana-about-title) { margin: 0 0 16px; font-family: var(--font-head); font-size: 26px; }
+:is(.hiragana-about-list, .katakana-about-list) { padding-left: 20px; color: var(--text-muted); }
+:is(.hiragana-detail-empty, .katakana-detail-empty) { text-align: center; padding: 32px 0; color: var(--text-muted); }
+:is(.hiragana-detail-empty-icon, .katakana-detail-empty-icon) { width: 40px; }
+@media (max-width: 700px) {
+  :is(.hiragana-main, .katakana-main) { width: calc(100% - 32px); padding-top: 24px; gap: 20px; }
+  :is(.hiragana-content-grid, .katakana-content-grid) { grid-template-columns: 1fr; gap: 24px; }
+  :is(.hiragana-detail-card, .katakana-detail-card) { grid-column: 1; grid-row: 1; position: sticky; top: 8px; padding: 12px; z-index: 5; max-height: calc(100dvh - 24px); overflow-y: auto; }
+  .kana-chart-panel { grid-row: 2; }
+  .kana-key { scroll-margin-top: 220px; }
+  :is(.hiragana-detail-body, .katakana-detail-body) { grid-template-columns: 76px minmax(0, 1fr); gap: 12px; align-items: center; }
+  :is(.hiragana-detail-character, .katakana-detail-character) { width: 76px; height: 76px; font-size: 52px; }
+  :is(.hiragana-detail-romaji, .katakana-detail-romaji) { font-size: 16px; margin-top: 4px; }
+  :is(.hiragana-detail-section, .katakana-detail-section), :is(.hiragana-writing-tips, .katakana-writing-tips) { grid-column: 1 / -1; }
+  :is(.hiragana-detail-section, .katakana-detail-section) h3, :is(.hiragana-writing-tips, .katakana-writing-tips) h3 { font-size: 16px; }
+  :is(.hiragana-detail-section, .katakana-detail-section) p, :is(.hiragana-writing-tips, .katakana-writing-tips) p { font-size: 14px; }
+  .kana-key { min-height: 74px; }
+  :is(.hiragana-study-tips-grid, .katakana-study-tips-grid) { grid-template-columns: 1fr; }
+  :is(.hiragana-card, .katakana-card) { padding: 16px; }
+}

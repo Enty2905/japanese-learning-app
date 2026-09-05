@@ -18,3 +18,27 @@ ai/models/*
 !ai/models/japanese_handwriting_kana_kanji_n3_v1.pt
 .github/
 rule-code/
+
+# Local AI coding agents and design-assistant files (not application AI code)
+.agents/
+.agent/
+.codex/
+.claude/
+.cursor/
+.superdesign/
+.ckw-design/
+.gemini/
+.windsurf/
+.roo/
+.kilocode/
+AGENTS.md
+AGENTS.override.md
+CLAUDE.md
+GEMINI.md
+skills-lock.json
+.cursorrules
+.windsurfrules
+.clinerules
+
+# Generated Python package metadata
+*.egg-info/

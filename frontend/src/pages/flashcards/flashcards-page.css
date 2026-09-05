@@ -1,10 +1,7 @@
 .flashcards-page {
-  --flashcards-logo-gradient: linear-gradient(165deg, #f2298a, #a640f5);
+  --flashcards-logo-gradient: var(--accent);
 
-  background:
-    radial-gradient(1400px 480px at -5% -20%, rgba(242, 41, 138, 0.15), transparent 60%),
-    radial-gradient(1000px 420px at 105% -10%, rgba(83, 96, 251, 0.16), transparent 58%),
-    var(--page-bg);
+  background: var(--page-bg);
 }
 
 .flashcards-main {
@@ -17,9 +14,9 @@
 .flashcards-detail-list,
 .flashcards-study-panel {
   border: 1px solid var(--stroke);
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: var(--shadow-soft);
+  border-radius: var(--radius-panel);
+  background: var(--panel-bg);
+  box-shadow: none;
 }
 
 .flashcards-hero {
@@ -36,21 +33,21 @@
 .flashcards-set-icon {
   display: grid;
   place-items: center;
-  color: #ffffff;
-  background: var(--flashcards-logo-gradient);
-  box-shadow: 0 12px 24px rgba(166, 64, 245, 0.18);
+  color: var(--on-accent);
+  background: var(--accent);
+  box-shadow: none;
 }
 
 .flashcards-folder-icon {
   width: 76px;
   height: 76px;
-  border-radius: 14px;
+  border-radius: var(--radius-panel);
 }
 
 .flashcards-set-icon {
   width: 44px;
   height: 44px;
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   flex-shrink: 0;
 }
 
@@ -88,16 +85,16 @@
   border-radius: 999px;
   display: grid;
   place-items: center;
-  color: #ffffff;
-  background: linear-gradient(155deg, #fb4a7d 5%, #8b48fb 52%, #3860ff 100%);
-  box-shadow: 0 12px 24px rgba(83, 96, 251, 0.26);
+  color: var(--on-accent);
+  background: var(--accent);
+  box-shadow: none;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .flashcards-add-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 16px 28px rgba(83, 96, 251, 0.32);
+  box-shadow: none;
 }
 
 .flashcards-add-btn svg,
@@ -132,27 +129,27 @@
 
 .flashcards-toolbar button,
 .flashcards-secondary-btn {
-  color: #536079;
-  background: #ffffff;
-  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.05);
+  color: var(--text-muted);
+  background: var(--panel-bg);
+  box-shadow: none;
 }
 
 .flashcards-toolbar button:hover,
 .flashcards-secondary-btn:hover {
-  color: var(--brand-blue);
-  background: #f2f4fc;
+  color: var(--accent);
+  background: var(--panel-bg);
 }
 
 .flashcards-toolbar button.is-active {
-  border: 1px solid #f7c5df;
-  color: var(--brand-pink);
-  background: #fde8f4;
+  border: 1px solid var(--accent-soft);
+  color: var(--accent);
+  background: var(--surface-inset);
 }
 
 .flashcards-primary-btn {
-  color: #ffffff;
-  background: linear-gradient(122deg, var(--brand-pink) 0%, var(--brand-violet) 48%, var(--brand-blue) 100%);
-  box-shadow: 0 10px 20px rgba(83, 96, 251, 0.2);
+  color: var(--on-accent);
+  background: var(--accent);
+  box-shadow: none;
 }
 
 .flashcards-primary-btn:disabled,
@@ -164,18 +161,18 @@
 .flashcards-status,
 .flashcards-empty-state {
   margin: 0;
-  border: 1px solid #dce3ee;
-  border-radius: 12px;
-  background: #ffffff;
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-panel);
+  background: var(--panel-bg);
   padding: 14px 16px;
-  color: #536079;
+  color: var(--text-muted);
 }
 
 .flashcards-status--error,
 .flashcards-form-error {
-  border-color: #fecaca;
-  color: #b42318;
-  background: #fff5f5;
+  border-color: var(--accent-soft);
+  color: var(--accent);
+  background: var(--panel-bg);
 }
 
 .flashcards-set-list {
@@ -186,9 +183,9 @@
 
 .flashcards-set-card {
   border: 1px solid var(--stroke);
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.92);
-  box-shadow: 0 8px 20px rgba(17, 24, 39, 0.05);
+  border-radius: var(--radius-panel);
+  background: var(--panel-bg);
+  box-shadow: none;
   padding: 14px;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -199,7 +196,7 @@
 
 .flashcards-set-card:hover {
   transform: translateY(-3px);
-  box-shadow: var(--shadow-hover);
+  box-shadow: none;
 }
 
 .flashcards-set-link {
@@ -224,7 +221,7 @@
 .flashcards-set-card small {
   display: block;
   margin: 5px 0 0;
-  color: #536079;
+  color: var(--text-muted);
   line-height: 1.45;
   overflow-wrap: anywhere;
 }
@@ -232,26 +229,26 @@
 .flashcards-icon-btn {
   width: 42px;
   height: 42px;
-  border: 1px solid #e0e6ef;
+  border: 1px solid var(--stroke);
   border-radius: 999px;
-  color: #68748a;
-  background: #ffffff;
+  color: var(--text-muted);
+  background: var(--panel-bg);
   display: grid;
   place-items: center;
   cursor: pointer;
 }
 
 .flashcards-icon-btn:hover:not(:disabled) {
-  color: var(--brand-pink);
-  border-color: #f8bfdc;
-  background: #fff0f7;
+  color: var(--accent);
+  border-color: var(--accent-soft);
+  background: var(--panel-bg);
 }
 
 .flashcards-modal-backdrop {
   position: fixed;
   inset: 0;
   z-index: 100;
-  background: rgba(15, 23, 42, 0.42);
+  background: var(--text-muted);
   display: grid;
   place-items: center;
   padding: 20px;
@@ -261,9 +258,9 @@
   width: min(1040px, 100%);
   max-height: min(800px, 92vh);
   overflow: auto;
-  border-radius: 18px;
-  background: #ffffff;
-  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.28);
+  border-radius: var(--radius-panel);
+  background: var(--panel-bg);
+  box-shadow: none;
 }
 
 .flashcards-modal form {
@@ -291,16 +288,16 @@
   height: 40px;
   border: 0;
   border-radius: 999px;
-  color: #5d6579;
-  background: #f3f5fb;
+  color: var(--text-muted);
+  background: var(--panel-bg);
   font-size: 26px;
   line-height: 1;
   cursor: pointer;
 }
 
 .flashcards-close-btn:hover {
-  color: var(--brand-pink);
-  background: #fde8f4;
+  color: var(--accent);
+  background: var(--surface-inset);
 }
 
 .flashcards-set-fields,
@@ -324,8 +321,8 @@
   min-height: 42px;
   border: 0;
   border-radius: 999px;
-  color: #5d6579;
-  background: #f3f5fb;
+  color: var(--text-muted);
+  background: var(--panel-bg);
   padding: 9px 18px;
   font: inherit;
   font-weight: 800;
@@ -333,8 +330,8 @@
 }
 
 .flashcards-mode-tabs button.is-active {
-  color: #ffffff;
-  background: linear-gradient(122deg, var(--brand-pink) 0%, var(--brand-violet) 50%, var(--brand-blue) 100%);
+  color: var(--on-accent);
+  background: var(--accent);
 }
 
 .flashcards-field {
@@ -343,7 +340,7 @@
 }
 
 .flashcards-field span {
-  color: #536079;
+  color: var(--text-muted);
   font-size: 13px;
   font-weight: 800;
   text-transform: uppercase;
@@ -353,11 +350,11 @@
 .flashcards-field textarea,
 .flashcards-custom-separator {
   width: 100%;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-panel);
   outline: 0;
-  color: #111827;
-  background: #f8fafc;
+  color: var(--text-main);
+  background: var(--panel-bg);
   font: inherit;
   font-size: 18px;
 }
@@ -365,9 +362,9 @@
 .flashcards-field input:focus,
 .flashcards-field textarea:focus,
 .flashcards-custom-separator:focus {
-  border-color: #b9c3ff;
-  background: #ffffff;
-  box-shadow: 0 0 0 3px rgba(83, 96, 251, 0.1);
+  border-color: var(--accent-soft);
+  background: var(--panel-bg);
+  box-shadow: none;
 }
 
 .flashcards-field input,
@@ -390,15 +387,15 @@
 
 .flashcards-card-editor-row {
   grid-template-columns: 38px minmax(0, 1fr) minmax(0, 1fr) auto;
-  border-radius: 14px;
-  border: 1px solid #edf1f7;
-  background: #fbfcff;
+  border-radius: var(--radius-panel);
+  border: 1px solid var(--stroke);
+  background: var(--panel-bg);
   padding: 14px;
   align-items: center;
 }
 
 .flashcards-card-editor-row > span {
-  color: #64748b;
+  color: var(--text-muted);
   font-weight: 800;
 }
 
@@ -422,7 +419,7 @@
 .flashcards-detail-list h2,
 .flashcards-summary h2 {
   margin: 0 0 12px;
-  color: #273047;
+  color: var(--text-main);
   font-family: var(--font-head);
   font-size: 22px;
   letter-spacing: 0;
@@ -433,14 +430,14 @@
   display: flex;
   align-items: center;
   gap: 9px;
-  color: #273047;
+  color: var(--text-main);
   font-weight: 700;
 }
 
 .flashcards-radio input {
   width: 18px;
   height: 18px;
-  accent-color: var(--brand-pink);
+  accent-color: var(--accent);
 }
 
 .flashcards-custom-separator {
@@ -449,19 +446,19 @@
 }
 
 .flashcards-preview {
-  border-top: 1px solid #edf1f7;
+  border-top: 1px solid var(--stroke);
   padding-top: 16px;
 }
 
 .flashcards-preview h3 span {
-  color: #64748b;
+  color: var(--text-muted);
   font-family: var(--font-body);
   font-size: 16px;
 }
 
 .flashcards-preview p {
   margin: 0;
-  color: #536079;
+  color: var(--text-muted);
 }
 
 .flashcards-preview-list {
@@ -470,9 +467,9 @@
 }
 
 .flashcards-preview-list article {
-  border: 1px solid #e5eaf2;
-  border-radius: 10px;
-  background: #fbfcff;
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-control);
+  background: var(--panel-bg);
   padding: 10px 12px;
   display: grid;
   grid-template-columns: minmax(0, 180px) minmax(0, 1fr);
@@ -486,8 +483,8 @@
 
 .flashcards-form-error {
   margin: 16px 0 0;
-  border: 1px solid #fecaca;
-  border-radius: 10px;
+  border: 1px solid var(--accent-soft);
+  border-radius: var(--radius-control);
   padding: 10px 12px;
 }
 
@@ -512,13 +509,13 @@
   right: -86px;
   top: -118px;
   border-radius: 999px;
-  background: radial-gradient(circle, rgba(242, 41, 138, 0.16), rgba(83, 96, 251, 0));
+  background: var(--page-bg);
   pointer-events: none;
 }
 
 .flashcards-back-link {
   width: max-content;
-  color: var(--brand-blue);
+  color: var(--accent);
   text-decoration: none;
   font-weight: 800;
   position: relative;
@@ -526,7 +523,7 @@
 }
 
 .flashcards-back-link:hover {
-  color: var(--brand-pink);
+  color: var(--accent);
 }
 
 .flashcards-detail-head-content {
@@ -548,10 +545,10 @@
 .flashcards-detail-icon {
   width: 72px;
   height: 72px;
-  border-radius: 18px;
-  color: #ffffff;
-  background: var(--flashcards-logo-gradient);
-  box-shadow: 0 14px 26px rgba(166, 64, 245, 0.22);
+  border-radius: var(--radius-panel);
+  color: var(--on-accent);
+  background: var(--accent);
+  box-shadow: none;
   display: grid;
   place-items: center;
   flex-shrink: 0;
@@ -572,10 +569,10 @@
 .flashcards-detail-meta span,
 .flashcards-detail-list-head span {
   min-height: 32px;
-  border: 1px solid #e3e8f4;
+  border: 1px solid var(--stroke);
   border-radius: 999px;
-  color: #5d6579;
-  background: #fbfcff;
+  color: var(--text-muted);
+  background: var(--panel-bg);
   display: inline-flex;
   align-items: center;
   padding: 5px 12px;
@@ -583,9 +580,9 @@
 }
 
 .flashcards-detail-meta span:first-child {
-  color: var(--brand-pink);
-  border-color: #f7c5df;
-  background: #fde8f4;
+  color: var(--accent);
+  border-color: var(--accent-soft);
+  background: var(--surface-inset);
 }
 
 .flashcards-detail-stats {
@@ -596,15 +593,15 @@
 
 .flashcards-detail-stats article {
   min-width: 96px;
-  border: 1px solid #e4e9f4;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-panel);
+  background: var(--panel-bg);
   padding: 12px 14px;
 }
 
 .flashcards-detail-stats span {
   display: block;
-  color: #68748a;
+  color: var(--text-muted);
   font-size: 13px;
   font-weight: 800;
 }
@@ -619,11 +616,11 @@
 }
 
 .flashcards-detail-stats article:nth-child(2) strong {
-  color: var(--brand-blue);
+  color: var(--accent);
 }
 
 .flashcards-detail-stats article:nth-child(3) strong {
-  color: var(--brand-pink);
+  color: var(--accent);
 }
 
 .flashcards-study-panel {
@@ -631,9 +628,7 @@
   display: grid;
   justify-items: center;
   gap: 16px;
-  background:
-    linear-gradient(180deg, rgba(83, 96, 251, 0.035), rgba(242, 41, 138, 0.035)),
-    rgba(255, 255, 255, 0.9);
+  background: var(--page-bg);
 }
 
 .flashcards-study-progress {
@@ -641,15 +636,15 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
-  color: #5d6579;
+  color: var(--text-muted);
   font-weight: 800;
 }
 
 .flashcards-study-progress span {
   min-height: 38px;
-  border: 1px solid #e2e8f0;
-  border-radius: 14px;
-  background: #fbfcff;
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-panel);
+  background: var(--panel-bg);
   display: grid;
   place-items: center;
   gap: 3px;
@@ -658,7 +653,7 @@
 }
 
 .flashcards-study-progress small {
-  color: #7a8498;
+  color: var(--text-muted);
   font-size: 12px;
   line-height: 1;
   text-transform: uppercase;
@@ -672,13 +667,13 @@
 }
 
 .flashcards-study-progress span:first-child {
-  color: var(--brand-blue);
-  background: #eef2ff;
-  border-color: #dbe3ff;
+  color: var(--accent);
+  background: var(--panel-bg);
+  border-color: var(--stroke);
 }
 
 .flashcards-study-progress span:first-child strong {
-  color: var(--brand-blue);
+  color: var(--accent);
 }
 
 .flashcards-study-stack {
@@ -693,10 +688,10 @@
   content: "";
   position: absolute;
   inset: 12px 18px -14px;
-  border: 1px solid #dce4f0;
-  border-radius: 22px;
-  background: #fbfcff;
-  box-shadow: 0 16px 32px rgba(17, 24, 39, 0.08);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-panel);
+  background: var(--panel-bg);
+  box-shadow: none;
 }
 
 .flashcards-study-stack::before {
@@ -729,10 +724,10 @@
 .flashcards-study-card-face {
   position: absolute;
   inset: 0;
-  border: 1px solid #dce4f0;
-  border-radius: 24px;
-  background: #ffffff;
-  box-shadow: 0 18px 40px rgba(17, 24, 39, 0.12);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-panel);
+  background: var(--panel-bg);
+  box-shadow: none;
   display: grid;
   place-items: center;
   align-content: center;
@@ -742,16 +737,14 @@
 }
 
 .flashcards-study-card-front {
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0), rgba(83, 96, 251, 0.035)),
-    #ffffff;
+  background: var(--page-bg);
 }
 
 .flashcards-study-card-face small {
-  color: #68748a;
-  border: 1px solid #e2e8f0;
+  color: var(--text-muted);
+  border: 1px solid var(--stroke);
   border-radius: 999px;
-  background: #fbfcff;
+  background: var(--panel-bg);
   padding: 7px 12px;
   font-weight: 800;
   text-transform: uppercase;
@@ -768,9 +761,7 @@
 }
 
 .flashcards-study-card-back {
-  background:
-    linear-gradient(135deg, rgba(242, 41, 138, 0.08), rgba(83, 96, 251, 0.08)),
-    #ffffff;
+  background: var(--accent);
   transform: rotateY(180deg);
 }
 
@@ -787,10 +778,10 @@
 
 .flashcards-study-arrow {
   min-height: 62px;
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  background: #ffffff;
-  color: #273047;
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-panel);
+  background: var(--panel-bg);
+  color: var(--text-main);
   font: inherit;
   font-weight: 800;
   cursor: pointer;
@@ -798,7 +789,7 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  box-shadow: 0 8px 18px rgba(17, 24, 39, 0.04);
+  box-shadow: none;
   transition: transform 0.18s ease, border-color 0.18s ease, background-color 0.18s ease, color 0.18s ease;
 }
 
@@ -812,15 +803,15 @@
 }
 
 .flashcards-study-arrow--left:hover {
-  border-color: #f8bfdc;
-  color: var(--brand-pink);
-  background: #fff0f7;
+  border-color: var(--accent-soft);
+  color: var(--accent);
+  background: var(--panel-bg);
 }
 
 .flashcards-study-arrow--right:hover {
-  border-color: #c7d2fe;
-  color: var(--brand-blue);
-  background: #eef2ff;
+  border-color: var(--accent-soft);
+  color: var(--accent);
+  background: var(--panel-bg);
 }
 
 .flashcards-summary {
@@ -836,42 +827,42 @@
 }
 
 .flashcards-summary-grid article {
-  border: 1px solid #e2e8f0;
-  border-radius: 14px;
-  background: #f8fafc;
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-panel);
+  background: var(--panel-bg);
   padding: 16px;
 }
 
 .flashcards-summary-grid article:first-child {
-  border-color: #dbe3ff;
-  background: #eef2ff;
+  border-color: var(--stroke);
+  background: var(--panel-bg);
 }
 
 .flashcards-summary-grid article:nth-child(2) {
-  border-color: #f8bfdc;
-  background: #fff0f7;
+  border-color: var(--accent-soft);
+  background: var(--panel-bg);
 }
 
 .flashcards-summary-grid span {
   display: block;
-  color: #536079;
+  color: var(--text-muted);
   font-weight: 800;
 }
 
 .flashcards-summary-grid strong {
   display: block;
   margin-top: 8px;
-  color: #111827;
+  color: var(--text-main);
   font-family: var(--font-head);
   font-size: 42px;
 }
 
 .flashcards-summary-grid article:first-child strong {
-  color: var(--brand-blue);
+  color: var(--accent);
 }
 
 .flashcards-summary-grid article:nth-child(2) strong {
-  color: var(--brand-pink);
+  color: var(--accent);
 }
 
 .flashcards-detail-list {
@@ -889,9 +880,9 @@
 }
 
 .flashcards-detail-list article {
-  border: 1px solid #e5eaf2;
-  border-radius: 14px;
-  background: #fbfcff;
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-panel);
+  background: var(--panel-bg);
   padding: 14px;
   display: grid;
   grid-template-columns: 48px minmax(0, 1fr) minmax(0, 1.2fr);
@@ -901,26 +892,26 @@
 }
 
 .flashcards-detail-list article:hover {
-  border-color: #cfd8ff;
-  box-shadow: 0 10px 22px rgba(83, 96, 251, 0.08);
+  border-color: var(--accent-soft);
+  box-shadow: none;
   transform: translateY(-2px);
 }
 
 .flashcards-detail-index {
   width: 34px;
   height: 34px;
-  border-radius: 12px;
-  background: #eef2ff;
+  border-radius: var(--radius-panel);
+  background: var(--panel-bg);
   display: grid;
   place-items: center;
-  color: var(--brand-blue);
+  color: var(--accent);
   font-weight: 800;
 }
 
 .flashcards-detail-list small {
   display: block;
   margin-bottom: 4px;
-  color: #7a8498;
+  color: var(--text-muted);
   font-size: 12px;
   font-weight: 800;
   text-transform: uppercase;
@@ -933,7 +924,7 @@
 }
 
 .flashcards-detail-list p {
-  color: #536079;
+  color: var(--text-muted);
   line-height: 1.45;
 }
 
@@ -989,7 +980,7 @@
   .flashcards-detail-icon {
     width: 58px;
     height: 58px;
-    border-radius: 16px;
+    border-radius: var(--radius-panel);
   }
 
   .flashcards-detail-icon svg {
@@ -1014,4 +1005,67 @@
   .flashcards-primary-btn {
     width: 100%;
   }
+}
+
+/* A review desk: quiet set rows, one legible study card. */
+.flashcards-intro { color: var(--text-muted); margin: 0; }
+.flashcards-add-btn { width: auto; padding: 10px 16px; display: inline-flex; gap: 8px; white-space: nowrap; }
+.flashcards-hero { min-height: 0; padding: 8px 0 24px; border: 0; border-bottom: 1px solid var(--stroke); border-radius: 0; background: transparent; }
+.flashcards-folder-icon { width: 56px; height: 56px; background: var(--success-soft); color: var(--success); border-radius: 4px; }
+.flashcards-hero p { font-weight: 400; }
+.flashcards-set-list { min-height: 0; gap: 0; }
+.flashcards-set-card { border: 0; border-bottom: 1px solid var(--stroke); border-radius: 0; padding: 20px 0; background: transparent; }
+.flashcards-set-card:hover { transform: none; background: var(--panel-bg); }
+.flashcards-set-icon { color: var(--success); background: var(--success-soft); border-radius: 4px; }
+.flashcards-toolbar button, .flashcards-secondary-btn, .flashcards-primary-btn, .flashcards-mode-tabs button, .flashcards-add-btn, .flashcards-icon-btn { border-radius: 8px; font-weight: 600; }
+.flashcards-secondary-btn { border: 1px solid var(--stroke-strong); }
+.flashcards-icon-btn, .flashcards-close-btn { width: 44px; height: 44px; flex-shrink: 0; }
+.flashcards-primary-btn:hover:not(:disabled) { background: var(--accent-hover); }
+.flashcards-detail-head { background: transparent; border: 0; border-bottom: 1px solid var(--stroke); border-radius: 0; padding: 0 0 24px; }
+.flashcards-detail-head::after { display: none; }
+.flashcards-detail-stats { display: none; /* The live counters are immediately below in the study panel. */ }
+.flashcards-detail-icon { width: 52px; height: 52px; border-radius: 4px; color: var(--success); background: var(--success-soft); }
+.flashcards-detail-head-content { grid-template-columns: minmax(0, 1fr); }
+.flashcards-detail-meta span { min-height: 0; padding: 0; border: 0; border-radius: 0; background: transparent; font: 400 14px/1.6 var(--font-body); }
+.flashcards-detail-meta span:first-child { padding: 4px 8px; border-radius: 4px; color: var(--success); background: var(--success-soft); }
+.flashcards-study-panel { border: 0; padding: 8px 0 24px; background: transparent; }
+.flashcards-study-progress span { border: 0; border-radius: 0; background: transparent; padding: 8px; gap: 8px; }
+.flashcards-study-progress span:first-child { background: transparent; }
+.flashcards-study-card-face { border-radius: 8px; background: var(--panel-bg); border-top: 3px solid var(--accent); gap: 24px; padding: 24px; overflow-y: auto; }
+.flashcards-study-card-face small { border: 0; background: transparent; padding: 0; font-size: 12px; font-weight: 500; }
+.flashcards-study-card-face strong { font-family: var(--font-japanese); font-weight: 500; font-size: clamp(30px, 4.5vw, 64px); }
+.flashcards-study-card-back { background: var(--success-soft); border-top-color: var(--success); }
+.flashcards-study-card-back strong { font-family: var(--font-body); font-size: clamp(24px, 3.5vw, 42px); }
+.flashcards-study-arrow { min-height: 50px; border-radius: 8px; font-weight: 600; }
+.flashcards-study-arrow--right { background: var(--success); color: var(--on-accent); border-color: var(--success); }
+.flashcards-study-arrow--right:hover { background: var(--text-main); color: var(--on-accent); border-color: var(--text-main); }
+.flashcards-study-arrow:hover, .flashcards-detail-list article:hover { transform: none; }
+.flashcards-detail-list article { border: 0; border-bottom: 1px solid var(--stroke); border-radius: 0; }
+.flashcards-empty-state { padding: 32px 24px; }
+.flashcards-modal.ui-dialog { width: min(960px, calc(100% - 32px)); max-height: calc(100dvh - 32px); }
+.flashcards-confirm-dialog { width: min(500px, calc(100% - 32px)); padding: 24px; }
+.flashcards-confirm-dialog h2 { margin: 0; font-family: var(--font-head); }
+.flashcards-confirm-dialog p { color: var(--text-muted); }
+.flashcards-confirm-dialog .flashcards-modal-actions { flex-direction: row; }
+.flashcards-confirm-dialog .flashcards-modal-actions button { flex: 1; }
+.flashcards-status--error, .flashcards-form-error { color: var(--error); background: var(--error-soft); border-color: var(--error); }
+.flashcards-radio { min-height: 44px; }
+.flashcards-summary-grid span { font: 600 14px/1.65 var(--font-body); }
+.flashcards-summary-grid article:first-child strong { color: var(--success); }
+.flashcards-summary-grid article:nth-child(2) strong { color: var(--warning); }
+@media (max-width: 820px) {
+  .flashcards-summary-grid span { min-height: 3.3em; }
+  .flashcards-hero { grid-template-columns: minmax(0, 1fr); gap: 16px; padding-top: 4px; }
+  .flashcards-folder-icon { display: none; }
+  .flashcards-hero h1 { font-size: 30px; line-height: 1.3; }
+  .flashcards-add-btn { position: static; width: fit-content; }
+  .flashcards-set-card { grid-template-columns: minmax(0, 1fr) auto; }
+  .flashcards-study-progress, .flashcards-summary-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .flashcards-summary-grid article { padding: 10px; }
+  .flashcards-study-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .flashcards-study-stack { min-height: 300px; }
+  .flashcards-study-card-face { padding: 20px; }
+  .flashcards-detail-list { padding: 16px; }
+  .flashcards-detail-list article { grid-template-columns: 24px minmax(0, 1fr); padding: 12px 0; }
+  .flashcards-detail-list article > div:last-child { grid-column: 2; }
 }
